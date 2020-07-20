@@ -1,0 +1,24 @@
+{%- set message_types = {
+  'cc': 0,
+  'midicc': 0,
+  'controlchange': 0,
+  'note': 1,
+  'noteon': 1,
+  'noteonoff': 1,
+  'programchange': 2,
+  'prg': 2,
+  'prgch': 2,
+  'polypressure': 3,
+  'channelpressure': 4,
+  'chpressure': 4,
+  'pitchbend': 5,
+} -%}
+<midi
+  var ="{{ midi_data.change_type|default('x') }}"
+  type="{{ message_types[midi_data.message_type|default('cc')] }}"
+  channel="{{ midi_data.channel|default(1) }}"
+  data1="{{ midi_data.data1|default(0) }}"
+  data2f="{{ midi_data.value_from|default(0) }}"
+  data2t="{{ midi_data.value_to|default(127) }}"
+  sysex=""
+/>

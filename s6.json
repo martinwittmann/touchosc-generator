@@ -12,14 +12,30 @@
       "text": "Mein Mixer",
       "components": [
         {
-          "type": "labelh",
-          "text": "Hallo Witti",
+          "name": "sdfsdfs",
+          "type": "led",
           "color": "yellow",
-          "text_size": 35,
-          "x": "0%",
-          "y": "0%",
-          "width": "50%",
-          "height": "40"
+          "width": 200,
+          "height": 100,
+          "x": "50%",
+          "y": "50%",
+          "value_from": 0.54,
+          "value_to": 0.999,
+          "osc": "/hallo/witti",
+          "midi_value": {
+            "message_type": "note",
+            "channel": 3,
+            "data1": 20,
+            "value_from": 33,
+            "value_to": 126
+          },
+          "midi_color": {
+            "message_type": "note",
+            "channel": 3,
+            "data1": 20,
+            "value_from": 33,
+            "value_to": 126
+          }
         }
       ]
     }

@@ -1,0 +1,14 @@
+<control
+  type="led"
+  name="{{ component.name|default('led') }}"
+  x="{{ component.x|default(0) }}"
+  y="{{ component.y|default(0) }}"
+  w="{{ component.width|default(20) }}"
+  h="{{ component.height|default(20) }}"
+  color="{{ component.color|default('red') }}"
+  scalef="{{ component.value_from|default(0) }}"
+  scalet="{{ component.value_to|default(1) }}"
+  osc_cs="{{ component.osc|default('') }}"
+>
+  {{ midi(component)|indent(2, False) }}
+</control>

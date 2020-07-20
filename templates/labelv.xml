@@ -10,4 +10,7 @@
   size="{{ component.size|default(14) }}"
   background="{{ component.background|default(False) }}"
   outline="{{ component.outline|default(False) }}"
-></control>
+  osc_cs="{{ component.osc|default('') }}"
+>
+  {{ midi(component)|indent(2, False) }}
+</control>
