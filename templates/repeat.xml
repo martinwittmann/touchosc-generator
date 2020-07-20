@@ -9,17 +9,16 @@
 {%- set item_height = component.component.height|float -%}
 {%- if item.height[-1] == '%' -%}
   {#- Calculate each repeated item's height by its parent's height. -#}
-  {{item.height|pprint}}
   {%- set item_height = (item.height[:-1]|float / 100) * component.height|float -%}
 {%- endif -%}
 
 {%- for index in range(component.count|int) -%}
-  {%- set item = component.component -%}
-  {%- set column = index % component.columns -%}
-  {%- set row = (index / component.columns)|round(0, 'floor') -%}
-  {% set _dummy = item.update({
+  {%- set item = component.component.copy() -%}
+  {%- set column = (index % component.columns)|int -%}
+  {%- set row = (index / component.columns)|round(0, 'floor')|int -%}
+  {%- set _dummy = item.update({
     'x': component.x|int + (column * item_width),
     'y': component.y|int + (row * item_height),
-  }) %}
-  {{ render(item, component) }}
+  }) -%}
+  {{ render(item, component, index=index, column=column, row=row) }}
 {%- endfor -%}

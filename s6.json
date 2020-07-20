@@ -44,7 +44,7 @@
           "spacer_y": 10,
           "component": {
             "type": "labelh",
-            "text": "Label @index @row @column",
+            "text": "Label @index @column @row",
             "width": "18%",
             "height": "30",
             "osc": "/action/{{data.labels.@index}}"

@@ -1,4 +1,4 @@
-{%- macro render(component, parent) -%}
+{%- macro render(component, parent, index=0, column=0, row=0) -%}
   {%- if component.type == 'tabpage' -%}
     {#- Set tabpage default values since this will always take up all available space. -#}
     {%- set _dummy = component.update({
@@ -11,19 +11,19 @@
 
   {%- if 'text' in component -%}
     {%- set _dummy = component.update({
-      'text': component.text|placeholders|b64encode,
+      'text': component.text|placeholders(data, index, column, row)|b64encode,
     }) -%}
   {%- endif -%}
 
   {%- if 'name' in component -%}
     {%- set _dummy = component.update({
-      'name': component.name|placeholders|b64encode,
+      'name': component.name|placeholders(data, index, column, row)|b64encode,
     }) -%}
   {%- endif -%}
 
   {%- if 'osc' in component -%}
     {%- set _dummy = component.update({
-      'osc': component.osc|placeholders|b64encode,
+      'osc': component.osc|placeholders(data, index, column, row)|b64encode,
     }) -%}
   {%- endif -%}
 
