@@ -1,7 +1,15 @@
-{% from 'macros.jinja' import include_component -%}
+{% from 'macros.jinja' import render -%}
+{#
+  We need to make sure even the layout component has coordinates in order to be
+  able to compute dimensions + coordinates of sub-components.
+#}
+{%- set _dummy = component.update({
+  'x': 0,
+  'y': 0,
+}) -%}
 <?xml version="1.0" encoding="utf-8"?>
 <layout version="{{ component.version }}" mode="{{ component.mode }}" w="{{ component.width }}" h="{{ component.height }}" orientation="{{ component.orientation }}">
-  {% for tabpage in tabpages %}
-    include_component(tabpage, component)
-  {% endfor %}
+{%- for tabpage in component.tabpages %}
+  {{ render(tabpage, component)|indent(2, False) }}
+{% endfor -%}
 </layout>
