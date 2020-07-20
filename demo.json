@@ -40,13 +40,13 @@
           "y": "0",
           "count": 9,
           "columns": 5,
-          "spacer_x": 5,
-          "spacer_y": 10,
+          "spacer_x": "2%",
+          "spacer_y": "2%",
           "component": {
             "type": "labelh",
             "text": "Label @index @column @row",
             "width": "18%",
-            "height": "30",
+            "height": "20%",
             "osc": "/action/{{data.labels.@index}}"
           }
         }

@@ -1,5 +1,6 @@
 {#- The item dimensions will be the same. No need to calculate this in the loop. -#}
 {%- set item = component.component -%}
+
 {%- set item_width = item.width|float -%}
 {%- if item.width[-1] == '%' -%}
   {#- Calculate each repeated item's width by its parent's width. -#}
@@ -12,13 +13,25 @@
   {%- set item_height = (item.height[:-1]|float / 100) * component.height|float -%}
 {%- endif -%}
 
+{%- set spacer_x = component.spacer_x|float -%}
+{%- if component.spacer_x[-1] == '%' -%}
+  {#- Calculate each repeated item's x offset. -#}
+  {%- set spacer_x = (component.spacer_x[:-1]|float / 100) * component.width|float -%}
+{%- endif -%}
+
+{%- set spacer_y = component.spacer_y|float -%}
+{%- if component.spacer_y[-1] == '%' -%}
+  {#- Calculate each repeated item's y offset. -#}
+  {%- set spacer_y = (component.spacer_y[:-1]|float / 100) * component.height|float -%}
+{%- endif -%}
+
 {%- for index in range(component.count|int) -%}
   {%- set item = component.component.copy() -%}
   {%- set column = (index % component.columns)|int -%}
   {%- set row = (index / component.columns)|round(0, 'floor')|int -%}
   {%- set _dummy = item.update({
-    'x': component.x|int + (column * item_width),
-    'y': component.y|int + (row * item_height),
+    'x': component.x|int + (spacer_x * column) + (column * item_width),
+    'y': component.y|int + (spacer_y * row) + (row * item_height),
   }) -%}
   {{ render(item, component, index=index, column=column, row=row) }}
 {%- endfor -%}
