@@ -65,6 +65,8 @@ def replace_placeholders(text='', data=False, index=0, column=0, row=0):
 
       # Set data index to the next result, if any.
       start_index = result.find('{{data.')
+  else:
+    result += ' no data'
 
   # Replace loop variables.
   # Note that we use 1-based indexes for replacements, because for user-facing
@@ -119,8 +121,8 @@ jinja2_environment = Environment(
 )
 jinja2_environment.filters['b64encode'] = base64.b64encode
 jinja2_environment.filters['placeholders'] = replace_placeholders
-if (hasattr(components_data, 'data')):
-  jinja2_environment.globals['data'] = components_data.data
+if ('data' in components_data):
+  jinja2_environment.globals['data'] = components_data['data']
 else:
   jinja2_environment.globals['data'] = False
 
