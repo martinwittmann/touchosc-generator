@@ -1,0 +1,2 @@
+<tabpage name="{{ name }}" scalef="{{ scale_from|default(0.0) }}" scalet="{{ scale_from|default(1.0) }}" li_t="{{ title|default('') }}" li_c="{{ color|default('gray') }}" li_s="{{ text_size|default(14) }}" li_o="false" li_b="false" la_t="" la_c="gray" la_s="14" la_o="false" la_b="false" >
+</tabpage>

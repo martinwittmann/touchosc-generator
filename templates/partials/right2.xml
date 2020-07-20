@@ -1,0 +1,18 @@
+<control name="cHVzaDc=" x="601" y="1583" w="70" h="195" color="orange" scalef="0.0" scalet="1.0" osc_cs="L2EvNDExMzA=" type="push" local_off="false" sp="true" sr="false" ></control>
+<control name="cHVzaDE0OQ==" x="1014" y="1782" w="130" h="195" color="red" scalef="0.0" scalet="1.0" osc_cs="L3JlY29yZA==" type="push" local_off="true" sp="false" sr="false" ></control>
+<control name="cHVzaDE1MA==" x="1014" y="1580" w="130" h="195" color="green" scalef="0.0" scalet="1.0" osc_cs="L3BsYXk=" type="push" local_off="true" sp="false" sr="false" ></control>
+<control name="cHVzaDE=" x="17" y="1584" w="200" h="400" color="green" scalef="0.0" scalet="1.0" osc_cs="L2EvX1JTYTE2ZGFlOTgwZjNmNzAzYzgzOTdkZmFkZTQzNjgxYjI2NmJkMTcwNQ==" type="push" local_off="false" sp="true" sr="false" ></control>
+<control name="bGFiZWwxMw==" x="172" y="1593" w="36" h="382" color="green" type="labelv" text="UExBWQ==" size="20" background="true" outline="false" ></control>
+<control name="cHVzaDQ=" x="226" y="1584" w="200" h="400" color="red" scalef="0.0" scalet="1.0" osc_cs="L2EvX1JTNDc1MmY5MzQ1Mjg3NzFhOGYxNWI0MzgyZDUxYzViMGU0NDk0MWRiMw==" type="push" local_off="false" sp="true" sr="false" ></control>
+<control name="bGFiZWwxNg==" x="381" y="1593" w="36" h="382" color="red" type="labelv" text="UkVD" size="20" background="true" outline="false" ></control>
+<control name="cHVzaDU=" x="438" y="1584" w="154" h="195" color="gray" scalef="0.0" scalet="1.0" osc_cs="L3JlcGVhdA==" type="push" local_off="true" sp="true" sr="false" ></control>
+<control name="bGFiZWwxNw==" x="547" y="1593" w="36" h="177" color="gray" type="labelv" text="TE9PUA==" size="20" background="true" outline="false" ></control>
+<control name="cHVzaDY=" x="677" y="1582" w="154" h="400" color="orange" scalef="0.0" scalet="1.0" osc_cs="L2EvMTEzNA==" type="push" local_off="false" sp="true" sr="false" ></control>
+<control name="bGFiZWwxOA==" x="786" y="1591" w="36" h="382" color="orange" type="labelv" text="VEFQIFRFTVBP" size="20" background="true" outline="false" ></control>
+<control name="bGFiZWwxOQ==" x="681" y="1584" w="103" h="398" color="gray" osc_cs="L3RlbXBvL3N0cg==" type="labelv" text="MTIw" size="90" background="false" outline="false" ></control>
+<control name="bGFiZWwyMA==" x="617" y="1583" w="50" h="195" color="gray" type="labelv" text="LQ==" size="75" background="false" outline="false" ></control>
+<control name="cHVzaDg=" x="601" y="1786" w="70" h="195" color="orange" scalef="0.0" scalet="1.0" osc_cs="L2EvNDExMjk=" type="push" local_off="false" sp="true" sr="false" ></control>
+<control name="bGFiZWwyMQ==" x="611" y="1786" w="50" h="195" color="gray" type="labelv" text="Kw==" size="65" background="false" outline="false" ></control>
+<control name="bGFiZWw0OA==" x="847" y="1579" w="154" h="400" color="gray" osc_cs="L2JlYXQvc3Ry" type="labelv" text="MS4xLjAw" size="80" background="false" outline="true" ></control>
+<control name="cHVzaDE1NA==" x="438" y="1786" w="154" h="195" color="gray" scalef="0.0" scalet="1.0" osc_cs="L3RyYWNrLzkvbXV0ZS90b2dnbGU=" type="push" local_off="true" sp="true" sr="false" ></control>
+<control name="bGFiZWw3MA==" x="547" y="1795" w="36" h="177" color="gray" type="labelv" text="{{ toggle_click.text }}" size="20" background="true" outline="false" ></control>

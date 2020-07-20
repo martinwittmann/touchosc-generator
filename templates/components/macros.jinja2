@@ -1,0 +1,37 @@
+{% macro component(component, raw_parent) %}
+  {%- set calculated_width = component.width -%}
+
+  {%- if component.width[-1] == '%' %}
+    {# Calculate this component's width by its parent's width. #}
+    {% set calculated_width = (float(component.width[:-1]) / 100) * float(raw_parent.width) %}
+  {% endif -%}
+
+  {%- set calculated_height = component.height %}
+  {% if component.height[-1] == '%' %}
+    {# Calculate this component's height by its parent's width. #}
+    {% set calculated_height = (float(component.height[:-1]) / 100) * float(raw_parent.height) %}
+  {% endif -%}
+
+  {%- set x_offset = float(component.x) %}
+  {% if component.x[-1] == '%' %}
+    {# Calculate this component's x_offset by its parent's width. #}
+    {% set x_offset = (float(component.x[:-1]) / 100) * float(raw_parent.height) %}
+  {% endif -%}
+
+  {%- set y_offset = float(component.y) %}
+  {% if component.y[-1] == '%' %}
+    {# Calculate this component's y_offset by its parent's width. #}
+    {% set y_offset = (float(component.y[:-1]) / 100) * float(raw_parent.height) %}
+  {% endif -%}
+
+
+  {%- set _dummy = component.update({
+    'width': calculated_width,
+    'height': calculated_height,
+    'x': float(raw_parent.x) + x_offset,
+    'y': float(raw_parent.y) + y_offset,
+  }) -%}
+
+  {# At this point, component x, y, width and height need to be absolute values/coordinates. #}
+  {% include 'components/' ~ type ~ '.xml' %}
+{% endmacro %}

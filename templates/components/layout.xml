@@ -1,0 +1,7 @@
+{% from 'macros.jinja' import include_component -%}
+<?xml version="1.0" encoding="utf-8"?>
+<layout version="{{ component.version }}" mode="{{ component.mode }}" w="{{ component.width }}" h="{{ component.height }}" orientation="{{ component.orientation }}">
+  {% for tabpage in tabpages %}
+    include_component(tabpage, component)
+  {% endfor %}
+</layout>

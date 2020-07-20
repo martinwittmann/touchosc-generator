@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="17" mode="3" w="2000" h="1200" orientation="horizontal">
+  {% include 'pages/page-mixer.xml' %}
+</layout>
