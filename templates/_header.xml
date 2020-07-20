@@ -64,7 +64,7 @@
 {%- endmacro -%}
 
 {%- macro midi(component) -%}
-  {%- if 'midi_value' in component -%}
+  {%- if 'midi_color' in component -%}
     {%- set midi_data = {
       'change_type': 'c',
       'message_type': component.midi_color.message_type,
@@ -76,14 +76,14 @@
     {%- include('_midi.xml') -%}
   {%- endif -%}
 
-  {%- if 'midi_color' in component -%}
+  {%- if 'midi_value' in component -%}
     {%- set midi_data = {
-      'change_type': 'c',
-      'message_type': component.midi_color.message_type,
-      'channel': component.midi_color.channel,
-      'data1': component.midi_color.data1,
-      'value_from': component.midi_color.value_from,
-      'value_to': component.midi_color.value_to,
+      'change_type': 'x',
+      'message_type': component.midi_value.message_type,
+      'channel': component.midi_value.channel,
+      'data1': component.midi_value.data1,
+      'value_from': component.midi_value.value_from,
+      'value_to': component.midi_value.value_to,
     } -%}
     {%- include('_midi.xml') -%}
   {%- endif -%}

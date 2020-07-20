@@ -7,10 +7,12 @@
   h="{{ component.height|default(30) }}"
   color="{{ component.color|default('gray') }}"
   text="{{ component.text|default('labelv') }}"
-  size="{{ component.size|default(14) }}"
+  size="{{ component.text_size|default(14) }}"
   background="{{ component.background|default(False) }}"
   outline="{{ component.outline|default(False) }}"
   osc_cs="{{ component.osc|default('') }}"
+  scalef="{{ component.value_from|default(0) }}"
+  scalet="{{ component.value_to|default(1) }}"
 >
   {{ midi(component)|indent(2, False) }}
 </control>

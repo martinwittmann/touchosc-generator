@@ -6,13 +6,13 @@
   li_t="{{ component.text|default('') }}"
   li_c="{{ component.color|default('gray') }}"
   li_s="{{ component.text_size|default(14) }}"
-  li_o="{{ component.outline|default(False) }}"
-  li_b="{{ component.background|default(False) }}"
+  li_o="{{ component.outline|default(false) }}"
+  li_b="{{ component.background|default(false) }}"
   la_t="{{ component.text|default('') }}"
   la_c="{{ component.color|default('gray') }}"
   la_s="{{ component.text_size|default(14) }}"
-  la_o="{{ component.outline|default(False) }}"
-  la_b="{{ component.background|default(False) }}" >
+  la_o="{{ component.outline|default(false) }}"
+  la_b="{{ component.background|default(false) }}" >
   {%- for child in component.components %}
     {{ render(child, component)|indent(2, False) }}
   {% endfor -%}
