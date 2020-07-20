@@ -12,29 +12,19 @@
       "text": "Mein Mixer",
       "components": [
         {
-          "name": "push111",
-          "type": "push",
+          "name": "xy111",
+          "type": "faderh",
+          "color": "green",
           "width": "50%",
-          "height": "50%",
+          "height": "25%",
           "x": "50%",
           "y": "50%",
           "value_from": 0.54,
           "value_to": 0.999,
           "osc": "/hallo/witti",
-          "midi_value": {
-            "message_type": "cc",
-            "channel": 3,
-            "data1": 26,
-            "value_from": 0,
-            "value_to": 126
-          },
-          "midi_color": {
-            "message_type": "note",
-            "channel": 3,
-            "data1": 26,
-            "value_from": 0,
-            "value_to": 126
-          }
+          "inverted": "true",
+          "centered": "true",
+          "response": "relative"
         }
       ]
     }

@@ -1,0 +1,17 @@
+<control
+  type="faderv"
+  name="{{ component.name }}"
+  x="{{ component.x|default(0) }}"
+  y="{{ component.y|default(0) }}"
+  w="{{ component.width|default(100) }}"
+  h="{{ component.height|default(30) }}"
+  color="{{ component.color|default('gray') }}"
+  osc_cs="{{ component.osc|default('') }}"
+  scalef="{{ component.value_from|default(0) }}"
+  scalet="{{ component.value_to|default(1) }}"
+  inverted="{{ component.inverted|default('false') }}"
+  response="{{ component.response|default('absolute') }}"
+  centered="{{ component.centered|default('false') }}"
+>
+  {{ midi(component)|indent(2, False) }}
+</control>

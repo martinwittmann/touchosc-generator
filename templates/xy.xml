@@ -1,0 +1,19 @@
+<control
+  type="xy"
+  name="{{ component.name }}"
+  x="{{ component.x|default(0) }}"
+  y="{{ component.y|default(0) }}"
+  w="{{ component.width|default(100) }}"
+  h="{{ component.height|default(30) }}"
+  color="{{ component.color|default('gray') }}"
+  osc_cs="{{ component.osc|default('') }}"
+  scalef="{{ component.value_from|default(0) }}"
+  scalet="{{ component.value_to|default(1) }}"
+  background="{{ component.background|default(False) }}"
+  outline="{{ component.outline|default(False) }}"
+  inverted_x="{{ component.invert_x|default('false') }}"
+  inverted_y="{{ component.invert_y|default('false') }}"
+  rev_xy="{{ component.reverse_xy|default('false') }}"
+>
+  {{ midi(component)|indent(2, False) }}
+</control>
