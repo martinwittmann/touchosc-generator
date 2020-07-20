@@ -11,19 +11,19 @@
 
   {%- if 'text' in component -%}
     {%- set _dummy = component.update({
-      'text': component.text|b64encode,
+      'text': component.text|placeholders|b64encode,
     }) -%}
   {%- endif -%}
 
   {%- if 'name' in component -%}
     {%- set _dummy = component.update({
-      'name': component.name|b64encode,
+      'name': component.name|placeholders|b64encode,
     }) -%}
   {%- endif -%}
 
   {%- if 'osc' in component -%}
     {%- set _dummy = component.update({
-      'osc': component.osc|b64encode,
+      'osc': component.osc|placeholders|b64encode,
     }) -%}
   {%- endif -%}
 

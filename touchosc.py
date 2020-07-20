@@ -22,6 +22,65 @@ class PrependingLoader(BaseLoader):
 
 
 
+def replace_placeholders(text='', data=False, index=0, column=0, row=0):
+  result = text
+
+  if data:
+    # Retrieve data values if necessary.
+    start_index = result.find('{{data.')
+    while start_index > -1:
+      end_index = start_index + result[start_index:].find('}}')
+      if (end_index < 0):
+        # Stop if we don't find any end delimiters.
+        data_index = -1
+        break
+      data_str = result[start_index + 7:end_index]
+      data_keys = data_str.split('.')
+      tmp_data = data
+      for key in data_keys:
+        # Replace index values with 0-based indexes.
+        if key == '@index':
+          key = index
+        elif key == '@column':
+          key = column
+        elif key == '@row':
+          key = row
+
+        if isinstance(tmp_data, dict) and tmp_data.has_key(key):
+          tmp_data = tmp_data[key]
+        elif isinstance(tmp_data, list) and tmp_data[key]:
+          tmp_data = tmp_data[key]
+        else:
+          # Something went wrong, we did not find the requested data.
+          # TODO Error handling.
+          print('Error looking up data: ' + result[start_index + 2:end_index] + ' was not found. Last key: "' + str(key) + '"')
+          return result
+
+      if not isinstance(tmp_data, str) and not isinstance(tmp_data, unicode):
+        print('Error looking up data: ' + result[start_index + 2:end_index] + ' is not a string or number. Last key: ' + str(key))
+        return result
+
+      # We found the data referenced in the string, replace it.
+      result = result[0:start_index] + tmp_data + result[end_index + 2:]
+
+      # Set data index to the next result, if any.
+      start_index = result.find('{{data.')
+
+  # Replace loop variables.
+  # Note that we use 1-based indexes for replacements, because for user-facing
+  # We replace these values *after* handling data replacements because there we
+  # need 0-based indexes and we don't want the replacements below to replace to
+  # incorrect data indexes.
+  # texts this makes much more sense.
+  result = result.replace("@index", str(index + 1))
+  result = result.replace('@column', str(column + 1))
+  result = result.replace('@row', str(row + 1))
+
+  return result
+
+
+
+
 
 if (len(sys.argv) < 2):
   print("Usage: ./touchosc.py [components-file]\nSee example.json.")
@@ -32,6 +91,7 @@ output_name = os.path.splitext(components_file)[0]
 
 with open(components_file, 'r') as components_data_file_handle:
   components_data = json.load(components_data_file_handle)
+
 
 template_dir = os.path.abspath('templates/') + '/'
 output_dir = 'output/' + output_name
@@ -58,6 +118,12 @@ jinja2_environment = Environment(
   loader=PrependingLoader(FileSystemLoader(template_dir), '_header.xml')
 )
 jinja2_environment.filters['b64encode'] = base64.b64encode
+jinja2_environment.filters['placeholders'] = replace_placeholders
+if (hasattr(components_data, 'data')):
+  jinja2_environment.globals['data'] = components_data.data
+else:
+  jinja2_environment.globals['data'] = False
+
 
 template = jinja2_environment.get_template(template_name)
 
