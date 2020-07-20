@@ -1,5 +1,5 @@
 <control
-  type="labelv"
+  type="labelh"
   name="{{ component.name }}"
   x="{{ component.x|default(0) }}"
   y="{{ component.y|default(0) }}"

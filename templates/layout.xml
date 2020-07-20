@@ -1,8 +1,7 @@
-{% from 'macros.jinja' import render -%}
-{#
+{#-
   We need to make sure even the layout component has coordinates in order to be
   able to compute dimensions + coordinates of sub-components.
-#}
+-#}
 {%- set _dummy = component.update({
   'x': 0,
   'y': 0,

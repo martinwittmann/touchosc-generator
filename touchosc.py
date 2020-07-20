@@ -1,11 +1,24 @@
 #!/usr/bin/python
 # Compile dynamic templates to touch osc files.
 import sys, os, base64, shutil, json
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, BaseLoader
 
-def s(str):
-  return base64.b64encode(str)
 
+
+# Copied from http://codyaray.com/2015/05/auto-load-jinja2-macros
+class PrependingLoader(BaseLoader):
+  def __init__(self, delegate, prepend_template):
+    self.delegate = delegate
+    self.prepend_template = prepend_template
+
+  def get_source(self, environment, template):
+    prepend_source, _, prepend_uptodate = self.delegate.get_source(environment, self.prepend_template)
+    main_source, main_filename, main_uptodate = self.delegate.get_source(environment, template)
+    uptodate = lambda: prepend_uptodate() and main_uptodate()
+    return prepend_source + main_source, main_filename, uptodate
+
+  def list_templates(self):
+    return self.delegate.list_templates()
 
 
 
@@ -40,11 +53,13 @@ if (not os.path.isfile(template_file)):
 
 
   
-env = Environment(
-  loader=FileSystemLoader(template_dir),
+# The header defines all macros that we need.
+jinja2_environment = Environment(
+  loader=PrependingLoader(FileSystemLoader(template_dir), '_header.xml')
 )
+jinja2_environment.filters['b64encode'] = base64.b64encode
 
-template = env.get_template(template_name)
+template = jinja2_environment.get_template(template_name)
 
 """
 layout = {
@@ -141,4 +156,7 @@ shutil.make_archive(output_file, 'zip', output_dir)
 # Note that output_dir already contains the output_name we want.
 # This means we can simply add the .touchosc extension and get the filename we want.
 # Example: ./touchosc.py test.json -> output/test -> output/test.touchosc.
-os.rename(output_file + '.zip', output_dir + ".touchosc")
+
+# TODO Remove this.
+#os.rename(output_file + '.zip', output_dir + ".touchosc")
+os.rename(output_file + '.zip', "/home/witti/test.touchosc")

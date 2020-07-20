@@ -9,7 +9,19 @@
     {
       "type": "tabpage",
       "name": "mixer",
-      "title": "Mein Mixer"
+      "text": "Mein Mixer",
+      "components": [
+        {
+          "type": "labelh",
+          "text": "Hallo Witti",
+          "color": "yellow",
+          "text_size": 35,
+          "x": "0%",
+          "y": "0%",
+          "width": "50%",
+          "height": "40"
+        }
+      ]
     }
   ]
 }

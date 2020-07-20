@@ -9,6 +9,18 @@
     }) -%}
   {%- endif -%}
 
+  {%- if 'text' in component -%}
+    {%- set _dummy = component.update({
+      'text': component.text|b64encode,
+    }) -%}
+  {%- endif -%}
+
+  {%- if 'name' in component -%}
+    {%- set _dummy = component.update({
+      'name': component.name|b64encode,
+    }) -%}
+  {%- endif -%}
+
   {%- set calculated_width = component.width -%}
 
   {%- if component.width[-1] == '%' -%}
@@ -25,7 +37,7 @@
   {%- set x_offset = component.x|float -%}
   {%- if component.x[-1] == '%' -%}
     {#- Calculate this component's x_offset by its parent's width. -#}
-    {%- set x_offset = (component.x[:-1]|float / 100) * parent.height|float -%}
+    {%- set x_offset = (component.x[:-1]|float / 100) * parent.width|float -%}
   {%- endif -%}
 
   {%- set y_offset = component.y|float -%}
@@ -35,12 +47,12 @@
   {%- endif -%}
 
   {%- set _dummy = component.update({
-    'width': calculated_width,
-    'height': calculated_height,
-    'x': parent.x|float + x_offset,
-    'y': parent.y|float + y_offset,
+    'width': calculated_width|int,
+    'height': calculated_height|int,
+    'x': (parent.x|float + x_offset)|int,
+    'y': (parent.y|float + y_offset)|int,
   }) -%}
-  
+
   {#- At this point, component x, y, width and height need to be absolute values/coordinates. -#}
   {%- include component.type ~ '.xml' -%}
 {%- endmacro -%}
