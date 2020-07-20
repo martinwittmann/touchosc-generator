@@ -15,14 +15,17 @@ if (len(sys.argv) < 2):
   sys.exit(1)
 
 components_file = sys.argv[1]
-output_name = os.path.splittext(components_file)
+output_name = os.path.splitext(components_file)[0]
 
-template_dir = 'templates/'
+with open(components_file, 'r') as components_data_file_handle:
+  components_data = json.load(components_data_file_handle)
+
+template_dir = os.path.abspath('templates/') + '/'
 output_dir = 'output/' + output_name
 
 # We always start with layout.xml, this is whatthe touchosc file format expects.
 template_name = 'layout.xml'
-template_file = os.path.abspath(template_dir + template_name + '.xml')
+template_file = template_dir + template_name
 
 # Create the output dir for this components file if not existing.
 if (not os.path.isdir(output_dir)):
@@ -38,11 +41,12 @@ if (not os.path.isfile(template_file)):
 
   
 env = Environment(
-  loader=FileSystemLoader(os.path.abspath(template_dir)),
+  loader=FileSystemLoader(template_dir),
 )
 
-template = env.get_template(template_name + '.xml')
+template = env.get_template(template_name)
 
+"""
 layout = {
   'width': 2000,
   'height': 1200,
@@ -125,11 +129,16 @@ data = {
     },
   },
 }
-output = template.render(**data)
+
+"""
+output = template.render(component=components_data)
 file_handle = open(output_file, 'w+')
 file_handle.write(output)
 file_handle.close()
 
 
-shutil.make_archive(output_dir + '.touchosc', 'zip', output_dir + template_name)
-os.rename(output_dir + ".touchosc.zip", output_dir + ".touchosc")
+shutil.make_archive(output_file, 'zip', output_dir)
+# Note that output_dir already contains the output_name we want.
+# This means we can simply add the .touchosc extension and get the filename we want.
+# Example: ./touchosc.py test.json -> output/test -> output/test.touchosc.
+os.rename(output_file + '.zip', output_dir + ".touchosc")

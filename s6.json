@@ -1,0 +1,15 @@
+{
+  "type": "layout",
+  "mode": 3,
+  "version": 17,
+  "width": 2000,
+  "height": 1200,
+  "orientation": "horizontal",
+  "tabpages": [
+    {
+      "type": "tabpage",
+      "name": "mixer",
+      "title": "Mein Mixer"
+    }
+  ]
+}
