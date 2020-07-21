@@ -16,7 +16,12 @@
       "Label 7",
       "Label 8",
       "Label 9"
-    ]
+    ],
+    "actions": {
+      "taptempo": 1134
+    }
+  },
+  "components": {
   },
   "tabpages": [
     {
@@ -25,30 +30,51 @@
       "text": "Mein Mixer",
       "components": [
         {
-          "type": "labelh",
-          "text": "Hallo",
-          "x": "50%",
-          "y": "50%",
-          "width": "20%",
-          "height": "5%"
-        },
-        {
-          "type": "repeat",
-          "width": "100%",
+          "type": "container",
+          "x": "75%",
+          "y": "2%",
+          "width": "23%",
           "height": "100%",
-          "x": "0",
-          "y": "0",
-          "count": 9,
-          "columns": 5,
-          "spacer_x": "2%",
-          "spacer_y": "2%",
-          "component": {
-            "type": "labelh",
-            "text": "Label @index @column @row",
-            "width": "18%",
-            "height": "20%",
-            "osc": "/action/{{data.labels.@index}}"
-          }
+          "components": [
+            {
+              "type": "push",
+              "color": "green",
+              "osc": "/play",
+              "x": 0,
+              "y": 0,
+              "width": "49%",
+              "height": "10%"
+            },
+            {
+              "type": "push",
+              "color": "red",
+              "osc": "/record",
+              "x": "51%",
+              "y": 0,
+              "width": "49%",
+              "height": "10%"
+            },
+            {
+              "type": "labelh",
+              "text": "1.1.00",
+              "x": 0,
+              "y": "10.8%",
+              "width": "100%",
+              "height": "13%",
+              "osc": "/beat/str",
+              "text_size": 80,
+              "outline": "true"
+            },
+            {
+              "type": "push",
+              "x": 0,
+              "y": "24.6%",
+              "width": "100%",
+              "height": "13%",
+              "color": "orange",
+              "osc": "/a/{{data.actions.taptempo}}"
+            }
+          ]
         }
       ]
     }

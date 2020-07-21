@@ -56,12 +56,12 @@ def replace_placeholders(text='', data=False, index=0, column=0, row=0):
           print('Error looking up data: ' + result[start_index + 2:end_index] + ' was not found. Last key: "' + str(key) + '"')
           return result
 
-      if not isinstance(tmp_data, str) and not isinstance(tmp_data, unicode):
-        print('Error looking up data: ' + result[start_index + 2:end_index] + ' is not a string or number. Last key: ' + str(key))
+      if not isinstance(tmp_data, str) and not isinstance(tmp_data, unicode) and not isinstance(tmp_data, int) and not isinstance(tmp_data, float):
+        print('Error looking up data: ' + result[start_index + 2:end_index] + ' is not a string or number. Last key: ' + str(key) + " Type: " + str(type(tmp_data)))
         return result
 
       # We found the data referenced in the string, replace it.
-      result = result[0:start_index] + tmp_data + result[end_index + 2:]
+      result = result[0:start_index] + str(tmp_data) + result[end_index + 2:]
 
       # Set data index to the next result, if any.
       start_index = result.find('{{data.')
@@ -89,7 +89,7 @@ if (len(sys.argv) < 2):
   sys.exit(1)
 
 components_file = sys.argv[1]
-output_name = os.path.splitext(components_file)[0]
+output_name = os.path.splitext(os.path.basename(components_file))[0]
 
 with open(components_file, 'r') as components_data_file_handle:
   components_data = json.load(components_data_file_handle)

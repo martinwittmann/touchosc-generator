@@ -1,0 +1,3 @@
+{%- for subcomponent in component.components -%}
+  {{ render(subcomponent, component, index=loop.index) }}
+{%- endfor -%}
