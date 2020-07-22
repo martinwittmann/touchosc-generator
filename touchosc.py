@@ -162,5 +162,5 @@ shutil.make_archive(output_file, 'zip', output_dir)
 # Example: ./touchosc.py test.json -> output/test -> output/test.touchosc.
 
 # TODO Remove this.
-os.rename(output_file + '.zip', output_dir + ".touchosc")
-#os.rename(output_file + '.zip', "/home/witti/test.touchosc")
+#os.rename(output_file + '.zip', output_dir + ".touchosc")
+os.rename(output_file + '.zip', "/home/witti/test.touchosc")

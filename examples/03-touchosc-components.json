@@ -25,15 +25,23 @@
       "text": "",
       "components": [
         {
-          "type": "labelh",
-          "text": "You can use all Touchosc components!",
-          "text_size": "20",
+          "type": "multifaderh",
           "color": "green",
-          "outline": "true",
           "x": "30%",
-          "y": "5%",
-          "width": "40%",
-          "height": "30%"
+          "y": "35%",
+          "width": "200",
+          "height": "200",
+          "osc": "/hhh",
+          "centered": "true",
+          "inverted": "true",
+          "number": "4"
+        },
+        {
+          "type": "timeh",
+          "x": "50%",
+          "y": "45%",
+          "width": 100,
+          "height": 100
         }
       ]
     }

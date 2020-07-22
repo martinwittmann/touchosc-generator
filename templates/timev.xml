@@ -1,18 +1,13 @@
 <control
-  type="labelh"
+  type="timev"
   name="{{ component.name }}"
   x="{{ component.x|default(0) }}"
   y="{{ component.y|default(0) }}"
   w="{{ component.width|default(100) }}"
   h="{{ component.height|default(30) }}"
   color="{{ component.color|default('gray') }}"
-  text="{{ component.text|default('') }}"
   size="{{ component.text_size|default(14) }}"
   background="{{ component.background|default('false') }}"
   outline="{{ component.outline|default('false') }}"
-  osc_cs="{{ component.osc|default('') }}"
-  scalef="{{ component.value_from|default(0) }}"
-  scalet="{{ component.value_to|default(1) }}"
->
-  {{- midi(component)|indent(2, False) -}}
-</control>
+  seconds="{{ component.seconds|default('false') }}"
+></control>

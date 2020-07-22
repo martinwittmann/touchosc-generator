@@ -1,5 +1,12 @@
+{#
+  It seems like the implementation of the touchosc editor (v1.8.7) if the
+  rev_xy attribute is buggy. Setting "true" or "false" just as with the editor
+  does not have an effect most of the time.
+  Since this is the first and only attribute so far where this happens, I
+  assume that the issue is with the editor.
+#}
 <control
-  type="xy"
+  type="multixy"
   name="{{ component.name }}"
   x="{{ component.x|default(0) }}"
   y="{{ component.y|default(0) }}"
@@ -17,3 +24,4 @@
 >
   {{- midi(component)|indent(2, False) -}}
 </control>
+

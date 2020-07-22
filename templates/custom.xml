@@ -60,9 +60,8 @@
   scalef="{{ component.value_from|default(0) }}"
   scalet="{{ component.value_to|default(1) }}"
 >
-  {{ midi(component)|indent(2, False) }}
+  {{- midi(component)|indent(2, False) -}}
 </control>
-
 <control
   type="labelh"
   name="{{ component.name }}"
@@ -79,5 +78,5 @@
   scalef="{{ component.value_from|default(0) }}"
   scalet="{{ component.value_to|default(1) }}"
 >
-  {{ midi(component)|indent(2, False) }}
+  {{- midi(component)|indent(2, False) -}}
 </control>
