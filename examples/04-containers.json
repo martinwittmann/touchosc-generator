@@ -26,7 +26,7 @@
       "components": [
         {
           "type": "labelh",
-          "text": "There are 2 additional components: container and repeat.",
+          "text": "There is an addition component: container.",
           "text_size": "25",
           "color": "green",
           "outline": "true",
@@ -55,6 +55,13 @@
               "text_size": "25",
               "width": "100%",
               "y": "30%"
+            },
+            {
+              "type": "labelh",
+              "text": "Actually it's more like a dummy than a component to help us with positioning :)",
+              "text_size": "20",
+              "width": "100%",
+              "y": "40%"
             }
           ]
         }

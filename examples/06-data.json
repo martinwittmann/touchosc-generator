@@ -1,0 +1,68 @@
+{
+  "type": "layout",
+  "mode": 3,
+  "version": 17,
+  "width": 2000,
+  "height": 1200,
+  "orientation": "horizontal",
+  "data": {
+    "actions": [
+      "action_aaaa",
+      "action_bbbb",
+      "action_cccc",
+      "action_dddd",
+      "action_eeee",
+      "action_ffff",
+      "action_gggg",
+      "action_hhhh",
+      "action_iiii"
+    ]
+  },
+  "tabpages": [
+    {
+      "type": "tabpage",
+      "name": "mixer",
+      "text": "Mein Mixer",
+      "components": [
+        {
+          "type": "labelh",
+          "text": "We can use custom data for things like osc messages.",
+          "text_size": 25,
+          "x": "0%",
+          "y": "0%",
+          "width": "100%",
+          "height": "5%"
+        },
+        {
+          "type": "labelh",
+          "text": "Of course you can use data in text and names too. If it's text it works!",
+          "text_size": 25,
+          "color": "green",
+          "x": "0%",
+          "y": "5%",
+          "width": "100%",
+          "height": "5%"
+        },
+        {
+          "type": "repeat",
+          "width": "100%",
+          "height": "100%",
+          "x": "0",
+          "y": "100",
+          "count": 9,
+          "columns": 5,
+          "spacer_x": "2%",
+          "spacer_y": "2%",
+          "component": {
+            "type": "labelh",
+            "text": "Label @index",
+            "width": "16%",
+            "height": "10%",
+            "osc": "/action/{{data.actions.@index}}",
+            "outline": "true"
+          }
+        }
+      ]
+    }
+  ]
+}

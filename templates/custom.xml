@@ -1,0 +1,83 @@
+{#
+  These simply are jinja2 templates: https://jinja.palletsprojects.com
+
+  The key/value pairs from the input json are available in the component variable.
+
+  We're using jinja2 filters to manipulate variables and text output.
+  Filters are applied by appending '|'. For example:
+  {{ component|filter }} or {{ 'My text'|filter }}
+
+  There are 3 custom filters:
+
+  b64encode:
+  Used for name, text and osc_cs attributes. If you print values from the
+  component variable, this has been applied already.
+  TouchOsc expects all text (name, text, osc_cs) to be base64 encoded.
+  If you see junk as text, something with this encoding is messed up :)
+
+  placeholders:
+  There are 4 placeholders available :
+  - @index: The 1-based index of the item in the repeat component. The first element as index 1.
+  - @row: 1-based row this item is in.
+  - @column: 1-based column this item is in.
+  - data variables:
+    Things like {{data.mykey.@index}} will be replaced with the corresponding
+    elements in the data section of the input json.
+    The data variable is globally available in here.
+    The indexes inside {{data...}} are 0-based, so the first element in a repeat
+    component gets the first element inside a data array when using {{data.array.@index}}.
+
+  merge:
+  You should not need this. Just out of completenes:
+  Creating a copy of an object/dict and merging all dict arguments.
+  For example:
+  data1 = { 'text': 'This dict has no width set. Only text' }
+  data2 = { 'width': '100%' }
+  data3 = { 'text': 'This text is actually used.'}
+  {%set data = data1|merge(data2, data3) %}
+  data will look like this:
+  {
+    'width': '100%',
+    'text': 'This text is actually used',
+  }
+
+
+  The midi macro is used to be able to associate midi messages.
+#}
+<control
+  type="labelh"
+  name="{{ component.name }}"
+  x="{{ component.x|default(0) }}"
+  y="{{ component.y|default(0) }}"
+  w="300"
+  h="{{ component.height|default(30) }}"
+  color="{{ component.color|default('gray') }}"
+  text="{{ 'My custom component'|b64encode }}"
+  size="25"
+  background="{{ component.background|default('false') }}"
+  outline="{{ component.outline|default('false') }}"
+  osc_cs="{{ component.osc|default('') }}"
+  scalef="{{ component.value_from|default(0) }}"
+  scalet="{{ component.value_to|default(1) }}"
+>
+  {{ midi(component)|indent(2, False) }}
+</control>
+
+<control
+  type="labelh"
+  name="{{ component.name }}"
+  x="{{ component.x|default(0) }}"
+  y="{{ component.y|default(0) }}"
+  w="{{ component.width|default(100) }}"
+  h="{{ component.height|default(30) }}"
+  color="{{ component.color|default('gray') }}"
+  text="{{ component.text|default('') }}"
+  size="{{ component.text_size|default(14) }}"
+  background="{{ component.background|default('false') }}"
+  outline="{{ component.outline|default('false') }}"
+  osc_cs="{{ component.osc|default('') }}"
+  scalef="{{ component.value_from|default(0) }}"
+  scalet="{{ component.value_to|default(1) }}"
+>
+  {{ midi(component)|indent(2, False) }}
+</control>
