@@ -1,0 +1,41 @@
+{
+  "type": "layout",
+  "mode": 3,
+  "version": 17,
+  "width": 2000,
+  "height": 1200,
+  "orientation": "horizontal",
+  "data": {
+    "labels": [
+      "Label 1",
+      "Label 2",
+      "Label 3",
+      "Label 4",
+      "Label 5",
+      "Label 6",
+      "Label 7",
+      "Label 8",
+      "Label 9"
+    ]
+  },
+  "tabpages": [
+    {
+      "type": "tabpage",
+      "name": "mixer",
+      "text": "",
+      "components": [
+        {
+          "type": "labelh",
+          "text": "You can use % for x, y, width and height!",
+          "text_size": "40",
+          "color": "green",
+          "outline": "true",
+          "x": "30%",
+          "y": "35%",
+          "width": "40%",
+          "height": "30%"
+        }
+      ]
+    }
+  ]
+}

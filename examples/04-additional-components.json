@@ -1,0 +1,64 @@
+{
+  "type": "layout",
+  "mode": 3,
+  "version": 17,
+  "width": 2000,
+  "height": 1200,
+  "orientation": "horizontal",
+  "data": {
+    "labels": [
+      "Label 1",
+      "Label 2",
+      "Label 3",
+      "Label 4",
+      "Label 5",
+      "Label 6",
+      "Label 7",
+      "Label 8",
+      "Label 9"
+    ]
+  },
+  "tabpages": [
+    {
+      "type": "tabpage",
+      "name": "mixer",
+      "text": "",
+      "components": [
+        {
+          "type": "labelh",
+          "text": "There are 2 additional components: container and repeat.",
+          "text_size": "25",
+          "color": "green",
+          "outline": "true",
+          "x": "30%",
+          "y": "5%",
+          "width": "40%",
+          "height": "10%"
+        },
+        {
+          "type": "container",
+          "x": "50%",
+          "y": "20%",
+          "width": "50%",
+          "height": "35%",
+          "components": [
+            {
+              "type": "labelh",
+              "text": "Components in a container can use coordinates relative to their container.",
+              "text_size": "25",
+              "width": "100%",
+              "y": "15%"
+            },
+            {
+              "type": "labelh",
+              "text": "This makes it way easier to position things consistently.",
+              "text_size": "25",
+              "width": "100%",
+              "y": "30%"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

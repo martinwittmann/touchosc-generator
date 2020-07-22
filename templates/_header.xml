@@ -11,15 +11,22 @@
     {% set ns.component = reused_component|merge(ns.component, {'type': reused_component.type}) %}
   {%- endif -%}
 
-  {%- if ns.component.type == 'tabpage' -%}
-    {#- Set tabpage default values since this will always take up all available space. -#}
-    {%- set ns.component = ns.component|merge({
+  {%- set component_defaults = {
       'x': 0,
       'y': 0,
-      'width': '100%',
-      'height': '100%',
-    }) -%}
+      'width': 100,
+      'height': 100,
+  } -%}
+  {%- if ns.component.type == 'tabpage' -%}
+    {#- Set tabpage default values since this will always take up all available space. -#}
+    {%- set component_defaults = {
+        'x': 0,
+        'y': 0,
+        'width': '100%',
+        'height': '100%',
+    } -%}
   {%- endif -%}
+    {%- set ns.component = component_defaults|merge(ns.component) -%}
 
 
   {#- Apply placeholders to all properties. -#}

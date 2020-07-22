@@ -141,10 +141,11 @@ else:
   jinja2_environment.globals['data'] = False
 
 # Provide the elements in reusable_components as global.
-if ('data' in components_data):
-  jinja2_environment.globals['reusable_components'] = components_data['reusable_components']
-else:
-  jinja2_environment.globals['reusable_components'] = False
+if ('reusable_components' in components_data):
+  if ('data' in components_data):
+    jinja2_environment.globals['reusable_components'] = components_data['reusable_components']
+  else:
+    jinja2_environment.globals['reusable_components'] = False
 
 
 template = jinja2_environment.get_template(template_name)
