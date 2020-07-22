@@ -21,6 +21,16 @@ class PrependingLoader(BaseLoader):
     return self.delegate.list_templates()
 
 
+def merge_jinja_dicts(*args):
+  result = {}
+  for dictionary in args:
+    result = {**result, **dictionary}
+  return result
+
+
+def base64_encode(text):
+  result = base64.b64encode(text.encode('utf-8')).decode('utf-8')
+  return result
 
 def replace_placeholders(text='', data=False, index=0, column=0, row=0):
   result = text
@@ -46,7 +56,7 @@ def replace_placeholders(text='', data=False, index=0, column=0, row=0):
         elif key == '@row':
           key = row
 
-        if isinstance(tmp_data, dict) and tmp_data.has_key(key):
+        if isinstance(tmp_data, dict) and key in tmp_data:
           tmp_data = tmp_data[key]
         elif isinstance(tmp_data, list) and tmp_data[key]:
           tmp_data = tmp_data[key]
@@ -56,7 +66,7 @@ def replace_placeholders(text='', data=False, index=0, column=0, row=0):
           print('Error looking up data: ' + result[start_index + 2:end_index] + ' was not found. Last key: "' + str(key) + '"')
           return result
 
-      if not isinstance(tmp_data, str) and not isinstance(tmp_data, unicode) and not isinstance(tmp_data, int) and not isinstance(tmp_data, float):
+      if not isinstance(tmp_data, str) and not isinstance(tmp_data, int) and not isinstance(tmp_data, float):
         print('Error looking up data: ' + result[start_index + 2:end_index] + ' is not a string or number. Last key: ' + str(key) + " Type: " + str(type(tmp_data)))
         return result
 
@@ -119,12 +129,21 @@ if (not os.path.isfile(template_file)):
 jinja2_environment = Environment(
   loader=PrependingLoader(FileSystemLoader(template_dir), '_header.xml')
 )
-jinja2_environment.filters['b64encode'] = base64.b64encode
+jinja2_environment.filters['b64encode'] = base64_encode
 jinja2_environment.filters['placeholders'] = replace_placeholders
+jinja2_environment.filters['merge'] = merge_jinja_dicts
+
+# Provide the elements in data as global.
 if ('data' in components_data):
   jinja2_environment.globals['data'] = components_data['data']
 else:
   jinja2_environment.globals['data'] = False
+
+# Provide the elements in reusable_components as global.
+if ('data' in components_data):
+  jinja2_environment.globals['reusable_components'] = components_data['reusable_components']
+else:
+  jinja2_environment.globals['reusable_components'] = False
 
 
 template = jinja2_environment.get_template(template_name)

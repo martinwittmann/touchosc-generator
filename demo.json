@@ -18,10 +18,137 @@
       "Label 9"
     ],
     "actions": {
-      "taptempo": 1134
-    }
+      "tap_tempo": 1134,
+      "decrease_tempo": 41130,
+      "increase_tempo": 41129
+    },
+    "font_size_xs": 20
   },
-  "components": {
+  "reusable_components": {
+    "test": {
+      "type": "container",
+      "x": 0,
+      "y": 0,
+      "width": "100%",
+      "height": "100%",
+      "components": [
+        {
+          "type": "labelh",
+          "text": "Hillo Hallo",
+          "width": 100,
+          "height": 30,
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "sidebar_right": {
+      "type": "container",
+      "x": "75%",
+      "y": "2%",
+      "width": "23%",
+      "height": "100%",
+      "components": [
+        {
+          "type": "push",
+          "color": "green",
+          "osc": "/play",
+          "x": 0,
+          "y": 0,
+          "width": "49%",
+          "height": "10%"
+        },
+        {
+          "type": "push",
+          "color": "red",
+          "osc": "/record",
+          "x": "51%",
+          "y": 0,
+          "width": "49%",
+          "height": "10%"
+        },
+        {
+          "type": "labelh",
+          "text": "1.1.00",
+          "x": 0,
+          "y": "10.8%",
+          "width": "100%",
+          "height": "13%",
+          "osc": "/beat/str",
+          "text_size": 80,
+          "outline": "true"
+        },
+        {
+          "type": "push",
+          "x": 0,
+          "y": "24.6%",
+          "width": "100%",
+          "height": "13%",
+          "color": "orange",
+          "text_size": 90,
+          "osc": "/tempo/str"
+        },
+        {
+          "type": "labelh",
+          "x": "2%",
+          "y": "25.4%",
+          "width": "96%",
+          "text": "TAP TEMPO",
+          "text_size": "{{data.font_size_xs}}",
+          "outline": "false",
+          "background": "true",
+          "height": "2.8%"
+        },
+        {
+          "type": "labelh",
+          "x": 0,
+          "y": "27.4%",
+          "width": "100%",
+          "height": "11%",
+          "osc": "/a/{{data.actions.tap_tempo}}",
+          "outline": "false",
+          "text": 120,
+          "text_size": 90,
+          "background": "false"
+        },
+        {
+          "type": "push",
+          "color": "orange",
+          "osc": "/a/{{data.actions.decrease_tempo}}",
+          "x": 0,
+          "y": "38.5%",
+          "width": "49%",
+          "height": "5%"
+        },
+        {
+          "type": "labelh",
+          "x": 0,
+          "y": "38.2%",
+          "width": "49%",
+          "height": "5%",
+          "text": "-",
+          "text_size": 65
+        },
+        {
+          "type": "push",
+          "color": "orange",
+          "osc": "/a/{{data.actions.increase_tempo}}",
+          "x": "51%",
+          "y": "38.5%",
+          "width": "49%",
+          "height": "5%"
+        },
+        {
+          "type": "labelh",
+          "x": "51%",
+          "y": "38.5%",
+          "width": "49%",
+          "height": "5%",
+          "text": "+",
+          "text_size": 65
+        }
+      ]
+    }
   },
   "tabpages": [
     {
@@ -30,51 +157,17 @@
       "text": "Mein Mixer",
       "components": [
         {
-          "type": "container",
-          "x": "75%",
-          "y": "2%",
-          "width": "23%",
-          "height": "100%",
-          "components": [
-            {
-              "type": "push",
-              "color": "green",
-              "osc": "/play",
-              "x": 0,
-              "y": 0,
-              "width": "49%",
-              "height": "10%"
-            },
-            {
-              "type": "push",
-              "color": "red",
-              "osc": "/record",
-              "x": "51%",
-              "y": 0,
-              "width": "49%",
-              "height": "10%"
-            },
-            {
-              "type": "labelh",
-              "text": "1.1.00",
-              "x": 0,
-              "y": "10.8%",
-              "width": "100%",
-              "height": "13%",
-              "osc": "/beat/str",
-              "text_size": 80,
-              "outline": "true"
-            },
-            {
-              "type": "push",
-              "x": 0,
-              "y": "24.6%",
-              "width": "100%",
-              "height": "13%",
-              "color": "orange",
-              "osc": "/a/{{data.actions.taptempo}}"
-            }
-          ]
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "type": "tabpage",
+      "name": "page2",
+      "text": "Seite 2",
+      "components": [
+        {
+          "type": "test"
         }
       ]
     }
