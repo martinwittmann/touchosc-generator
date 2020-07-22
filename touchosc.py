@@ -29,10 +29,11 @@ def merge_jinja_dicts(*args):
 
 
 def base64_encode(text):
-  result = base64.b64encode(text.encode('utf-8')).decode('utf-8')
-  return result
+  return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
 def replace_placeholders(text='', data=False, index=0, column=0, row=0):
+  if (type(text) != str):
+    text = str(text)
   result = text
 
   if data:
@@ -148,91 +149,6 @@ else:
 
 template = jinja2_environment.get_template(template_name)
 
-"""
-layout = {
-  'width': 2000,
-  'height': 1200,
-  'column_spacer': 20,
-  'right': {
-    'width': 400,
-    'spacer': 10,
-    'button_height': 130,
-    'button_height_sm': 70,
-    'button_width': 400,
-    'button_half_width': 195,
-    'tempo_y': 601,
-  },
-}
-layout['right']['x'] = layout['width'] - layout['right']['width'] - layout['column_spacer']
-
-data = {
-  'label_1': s('Gallo Wuttu'),
-  'toggle_click': {
-    'text': s('CLICK MUTE'),
-  },
-  'buttons': {
-    'decrease_tempo': {
-      'name': s('decrease_tempo'),
-      'width': layout['right']['button_half_width'],
-      'height': layout['right']['button_height_sm'],
-      'x': layout['right']['x'],
-      'y': layout['right']['tempo_y'],
-      'color': 'orange',
-      'osc': s('/a/41130'),
-      'type': 'push',
-      'local_off': 'false',
-      'sp': 'true',
-      'sr': 'false',
-    },
-    'decrease_tempo_label': {
-      'name': s('decrease_tempo_label'),
-      'text': s('-'),
-      'y': layout['right']['tempo_y'] - 5,
-      'type': 'labelh',
-      'background': 'false',
-      'outline': 'false',
-      'color': 'gray',
-      'size': '75',
-    },
-    'increase_tempo': {
-      'name': s('increase_tempo'),
-      'width': layout['right']['button_half_width'],
-      'height': layout['right']['button_height_sm'],
-      'x': layout['right']['x'] + layout['right']['button_half_width'] + layout['right']['spacer'],
-      'y': layout['right']['tempo_y'],
-      'color': 'orange',
-      'osc': s('/a/41129'),
-      'type': 'push',
-      'local_off': 'false',
-      'sp': 'true',
-      'sr': 'false',
-    },
-    'increase_tempo_label': {
-      'name': s('increase_tempo_label'),
-      'text': s('+'),
-      'type': 'labelh',
-      'background': 'false',
-      'outline': 'false',
-      'color': 'gray',
-      'size': '65',
-    },
-    'record': {
-      'name': s('record'),
-      'width': layout['right']['button_width'],
-      'height': layout['right']['button_height'],
-      'x': layout['right']['x'],
-      'y': 1014,
-      'color': 'red',
-      'osc': s('/record'),
-      'type': 'push',
-      'local_off': 'false',
-      'sp': 'true',
-      'sr': 'false',
-    },
-  },
-}
-
-"""
 output = template.render(component=components_data)
 file_handle = open(output_file, 'w+')
 file_handle.write(output)

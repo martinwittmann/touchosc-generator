@@ -3,17 +3,6 @@
   {%- set ns = namespace(
     component=component,
   ) -%}
-  {{ns.component|pprint}}
-
-
-    {%- set ns.component = ns.component|merge({
-      'x': 0,
-      'y': 0,
-      'width': '100%',
-      'height': '100%',
-    }) -%}
-
-
 
 
   {%- if ns.component.type in reusable_components -%}
@@ -49,10 +38,7 @@
     {%- endif -%}
 
   {%- endfor -%}
-
-  {% if 'width' not in ns.component %}
-    {{ ns.component|pprint }}
-  {% endif %}
+  
   {%- set calculated_width = ns.component.width -%}
   {%- if ns.component.width[-1] == '%' -%}
     {#- Calculate this component's width by its parent's width. -#}
@@ -77,6 +63,7 @@
     {%- set y_offset = (ns.component.y[:-1]|float / 100) * parent.height|float -%}
   {%- endif -%}
 
+
   {%- set ns.component = ns.component|merge({
     'width': calculated_width|int,
     'height': calculated_height|int,
@@ -85,8 +72,16 @@
   }) -%}
 
 
+
   {#- At this point, component x, y, width and height need to be absolute values/coordinates. -#}
-  {%- include ns.component.type ~ '.xml' -%}
+  {#-
+    Note that we need to set the component variable outside of ns since this is
+    what each template uses.
+   -#}
+  {% set component = ns.component %}
+  {%- include component.type ~ '.xml' -%}
+
+
 {%- endmacro -%}
 
 {%- macro midi(component) -%}
