@@ -6,8 +6,10 @@ TouchOsc Generator does not have a UI, but a script generating .touchosc files b
 
 If you don't have python installed or don't know how to run python scripts on your computer, in the [Installation](#installation) section you will find everything to get you started.
 
-# Example
-This created a basic .touchosc file containing just a label and some text in it.
+# Examples
+
+## Simple
+This creates a basic .touchosc file containing just a label and some text in it.
 
 example.json:
 ```
@@ -40,6 +42,63 @@ example.json:
 python ./touchosc.py example.json
 ```
 This creates ./output/example.touchosc.
+
+## Something useful
+Let's create 10 faders sending different osc messages:
+
+```
+{
+  "type": "layout",
+  "mode": 3,
+  "version": 17,
+  "width": 2000,
+  "height": 1200,
+  "orientation": "horizontal",
+  "data": {
+    "messages": [
+      "msg-1",
+      "msg-2",
+      "msg-3",
+      "msg-4",
+      "msg-5",
+      "msg-6",
+      "msg-7",
+      "msg-8",
+      "msg-9",
+      "msg-10"
+    ]
+  },
+  "tabpages": [
+    {
+      "type": "tabpage",
+      "name": "mixer",
+      "text": "Mixer",
+      "components": [
+        {
+          "type": "repeat",
+          "width": "100%",
+          "height": "80%",
+          "x": "0",
+          "y": "100",
+          "count": 10,
+          "columns": 10,
+          "spacer_x": "2%",
+          "component": {
+            "type": "faderv",
+            "width": "16%",
+            "height": "50%",
+            "osc": "/action/{{data.messages.@index}}"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+Yes, you can use percentages for dimensions and coordinates 💪 
+
+The examples directory contains several input files showcasing in more detail what you can do with TouchOsc Generator.
 
 
 ## Installation
