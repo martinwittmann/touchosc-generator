@@ -95,19 +95,34 @@
       "toggle_repeat": 1068,
       "toggle_click": 86,
       "record_custom": "_RSa16dae980f3f703c8397dfade43681b266bd1705",
-      "play_custom": "_RS4752f934528771a8f15b4382d51c5b0e44941db3"
+      "play_custom": "_RS4752f934528771a8f15b4382d51c5b0e44941db3",
+      "toggle_input": [
+        "_RS310a7ea58d8e06930b7709a49e0a9af559017d9c",
+        "_RS987b0db1e9c9b456bcad52375100ec6efe59c24f",
+        "_RS0ae5cedf6d70736aefead520b39fa381c2f2e7a0",
+        "_RSadbee9716ee0157527756005179e41095678d95a",
+        "_RSe41bea0e435270c1f49fa5aa9c457087569b5cb2",
+        "_RS9cf1157f81772f62e2db6c7eb8c26b8782cbd4d7",
+        "_RS8aad5a3dee378f4a305c9c703a125eb5e764689c",
+        "_RS28c3e1a7af5497ee08410a3efa50ba610cc510a4"
+      ]
     },
     "font_size_xs": 20
   },
   "reusable_components": {
     "meter": {
       "type": "container",
+      "x": 0,
+      "y": 0,
+      "width": "100%",
+      "height": "100%",
       "components": [
         {
           "type": "repeat",
           "count": 16,
           "columns": 1,
           "spacer_y": "2%",
+          "spacer_x": "0",
           "component": {
             "type": "led",
             "color": "{{data.meter16.@index.color}}",
@@ -117,6 +132,37 @@
             "value_from": "{{data.meter16.@index.from}}",
             "value_to": "{{data.meter16.@index.to}}"
           }
+        }
+      ]
+    },
+    "mixer_track": {
+      "type": "container",
+      "components": [
+        {
+          "type": "push",
+          "width": "100%",
+          "height": "6%",
+          "osc": "/a/{{data.actions.toggle_input.@index}}"
+        },
+        {
+          "type": "labelh",
+          "width": "100%",
+          "height": "6%",
+          "osc": "/track/@index/name}}",
+          "outline": "true"
+        },
+        {
+          "type": "faderv",
+          "width": "80%",
+          "height": "60%",
+          "y": "6.8%"
+        },
+        {
+          "type": "meter",
+          "width": "32",
+          "height": "60%",
+          "x": "0",
+          "y": "0"
         }
       ]
     },
@@ -315,16 +361,17 @@
       "text": "Mixer",
       "components": [
         {
-          "type": "meter",
-          "args": {
-            "track": 1
-          }
-        },
-        {
-          "type": "meter",
-          "x": 50,
-          "args": {
-            "track": 2
+          "type": "repeat",
+          "width": "75%",
+          "height": "100%",
+          "count": 4,
+          "columns": 4,
+          "spacer_x": "2%",
+          "spacer_y": "0",
+          "component": {
+            "type": "mixer_track",
+            "width": "10%",
+            "height": "100%"
           }
         },
         {
