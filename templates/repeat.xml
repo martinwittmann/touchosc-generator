@@ -7,18 +7,24 @@
   {%- set item_width = (item.width[:-1]|float / 100) * component.width|float -%}
 {%- endif -%}
 
-{%- set item_height = component.component.height|float -%}
+{%- set item_height = item.height|float -%}
 {%- if item.height[-1] == '%' -%}
   {#- Calculate each repeated item's height by its parent's height. -#}
   {%- set item_height = (item.height[:-1]|float / 100) * component.height|float -%}
 {%- endif -%}
 
+{%- if 'spacer_x' not in component -%}
+  {% set component = component|merge({'spacer_x': 0}) %}
+{%- endif -%}
 {%- set spacer_x = component.spacer_x|float -%}
 {%- if component.spacer_x[-1] == '%' -%}
   {#- Calculate each repeated item's x offset. -#}
   {%- set spacer_x = (component.spacer_x[:-1]|float / 100) * component.width|float -%}
 {%- endif -%}
 
+{%- if 'spacer_x' not in component -%}
+  {% set component = component|merge({'spacer_x': 0}) %}
+{%- endif -%}
 {%- set spacer_y = component.spacer_y|float -%}
 {%- if component.spacer_y[-1] == '%' -%}
   {#- Calculate each repeated item's y offset. -#}
@@ -26,7 +32,7 @@
 {%- endif -%}
 
 {%- for index in range(component.count|int) -%}
-  {%- set item = component.component.copy() -%}
+  {%- set item = item.copy() -%}
   {%- set column = (index % component.columns)|int -%}
   {%- set row = (index / component.columns)|round(0, 'floor')|int -%}
   {%- set _dummy = item.update({

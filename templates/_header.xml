@@ -1,8 +1,19 @@
-{%- macro render(component, parent, index=0, column=0, row=0) -%}
+{%- macro render(component, parent, arguments=False, index=0, column=0, row=0) -%}
+
   {# All variables we intend to change, need to go into the namespace. #}
   {%- set ns = namespace(
     component=component,
+    arguments={}
   ) -%}
+
+  {#- Set arguments, and let children override their parent's values. -#}
+  {%- if 'args' in parent and parent.args -%}
+    {% set ns.arguments = ns.arguments|merge(parent.args) -%}
+  {%- endif -%}
+
+  {%- if 'args' in component and component.args -%}
+    {% set ns.arguments = ns.arguments|merge(component.args) -%}
+  {%- endif -%}
 
 
   {%- if ns.component.type in reusable_components -%}
@@ -26,7 +37,8 @@
         'height': '100%',
     } -%}
   {%- endif -%}
-    {%- set ns.component = component_defaults|merge(ns.component) -%}
+  {%- set ns.component = component_defaults|merge(ns.component) -%}
+  {%- set ns.component = ns.component|merge({'args': ns.arguments}) -%}
 
 
   {#- Apply placeholders to all properties. -#}
@@ -34,8 +46,8 @@
     {%- set value = ns.component[key] -%}
 
     {# Handle all string values and text, name, osc #}
-    {%- if value is string or key in ['text', 'name', 'osc'] -%}
-      {%- set new_value = value|placeholders(data, index, column, row) -%}
+    {%- if value is string or key in ['text', 'name', 'osc'] and key != 'args' -%}
+      {%- set new_value = value|placeholders(data, ns.arguments, index, column, row) -%}
 
       {%- if key in ['text', 'name', 'osc'] -%}
         {%- set new_value = new_value|b64encode -%}

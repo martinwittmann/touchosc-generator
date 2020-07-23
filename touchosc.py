@@ -31,19 +31,18 @@ def merge_jinja_dicts(*args):
 def base64_encode(text):
   return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
-def replace_placeholders(text='', data=False, index=0, column=0, row=0):
+def replace_placeholders(text='', data=False, arguments=False, index=0, column=0, row=0):
   if (type(text) != str):
     text = str(text)
   result = text
 
+  # Retrieve data values if necessary.
   if data:
-    # Retrieve data values if necessary.
     start_index = result.find('{{data.')
     while start_index > -1:
       end_index = start_index + result[start_index:].find('}}')
       if (end_index < 0):
         # Stop if we don't find any end delimiters.
-        data_index = -1
         break
       data_str = result[start_index + 7:end_index]
       data_keys = data_str.split('.')
@@ -76,8 +75,39 @@ def replace_placeholders(text='', data=False, index=0, column=0, row=0):
 
       # Set data index to the next result, if any.
       start_index = result.find('{{data.')
-  else:
-    result += ' no data'
+
+
+  # Replace arguments if necessary.
+  if arguments:
+    start_index = result.find('{{args.')
+    while start_index > -1:
+      end_index = start_index + result[start_index:].find('}}')
+      if (end_index < 0):
+        # Stop if we don't find any end delimiters.
+        break
+      arg_str = result[start_index + 7:end_index]
+      arg_keys = arg_str.split('.')
+      tmp_arg = arguments
+      for key in arg_keys:
+        if isinstance(tmp_arg, dict) and key in tmp_arg:
+          tmp_arg = tmp_arg[key]
+        elif isinstance(tmp_arg, list) and tmp_arg[key]:
+          tmp_arg = tmp_arg[key]
+        else:
+          # Something went wrong, we did not find the requested arg.
+          # TODO Error handling.
+          print('Error looking up argument: ' + result[start_index + 2:end_index] + ' was not found. Last key: "' + str(key) + '"')
+          return result
+
+      if not isinstance(tmp_arg, str) and not isinstance(tmp_arg, int) and not isinstance(tmp_arg, float):
+        print('Error looking up arg: ' + result[start_index + 2:end_index] + ' is not a string or number. Last key: ' + str(key) + " Type: " + str(type(tmp_arg)))
+        return result
+
+      # We found the arg referenced in the string, replace it.
+      result = result[0:start_index] + str(tmp_arg) + result[end_index + 2:]
+
+      # Set arg index to the next result, if any.
+      start_index = result.find('{{arg.')
 
   # Replace loop variables.
   # Note that we use 1-based indexes for replacements, because for user-facing

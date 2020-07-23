@@ -1,3 +1,6 @@
+{%- if 'args' not in component -%}
+  {%- set component = component|merge({'args': False}) -%}
+{%- endif -%}
 {%- for subcomponent in component.components -%}
   {{ render(subcomponent, component, index=loop.index) }}
 {%- endfor -%}
