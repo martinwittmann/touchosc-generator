@@ -1,0 +1,10 @@
+[tool.black]
+hang_closing = true
+line_length = 120
+
+[tool.autopep8]
+hang_closing = true
+max_line_length = 120
+
+[tool.yapf]
+column_limit=120
