@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # Compile dynamic templates to touch osc files.
+import argparse
 import base64
 import json
 import os
@@ -156,16 +157,23 @@ def replace_placeholders(text="", data=False, arguments=False, index=0, column=0
 
 
 def main(argv):
-    if len(argv) < 2:
-        print("Usage: ./touchosc.py [components-file]\nSee example.json.")
-        sys.exit(1)
+    # Parse command line parameters
+    argv = list(filter(lambda elem: elem != "", argv))
+    parser = argparse.ArgumentParser(
+        description="Compile dynamic templates to touch osc files.",
+        usage="./touchosc.py [components-file]. See example.json.",
+    )
+    parser.add_argument("components_file")
+    args = parser.parse_args(argv)
 
-    components_file = argv[1]
-    output_name = os.path.splitext(os.path.basename(components_file))[0]
+    # Sanitize input
+    args.components_file = os.path.abspath(args.components_file)
 
-    with open(components_file, "r") as components_data_file_handle:
+    # Parse components file
+    with open(args.components_file, "r") as components_data_file_handle:
         components_data = json.load(components_data_file_handle)
 
+    output_name = os.path.splitext(os.path.basename(args.components_file))[0]
     template_dir = os.path.abspath("templates")
     output_dir = os.path.join("output", output_name)
 
@@ -214,10 +222,6 @@ def main(argv):
     # Note that output_dir already contains the output_name we want.
     # This means we can simply add the .touchosc extension and get the filename we want.
     # Example: ./touchosc.py test.json -> output/test -> output/test.touchosc.
-
-    # TODO Remove this.
-    os.rename(output_file + ".zip", output_dir + ".touchosc")
-    # os.rename(output_file + '.zip', "/home/witti/test.touchosc")
 
 
 if __name__ == "__main__":
