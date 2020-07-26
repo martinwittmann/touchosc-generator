@@ -206,14 +206,27 @@ def main(argv: List[str]):
 
     # Sanitize input
     args.description_file = os.path.abspath(args.description_file)
+    if not os.path.isfile(args.description_file):
+        print('Description file ' + args.description_file + ' does not exist', file=sys.stderr)
+        sys.exit(1)
+
     if args.name is None:
         args.name = os.path.splitext(os.path.basename(args.description_file))[0]
     if args.output_dir is None:
         args.output_dir = os.path.abspath(os.path.join('output', args.name))
 
-    components_data = get_description_data(args.description_file)
+    try:
+        components_data = get_description_data(args.description_file)
+    except OSError as e:
+        print('Description file ' + e.filename + ' could not be opened.', file=sys.stderr)
+        sys.exit(1)
+
     output = process(components_data)
-    file_output(output, args.name, args.output_dir, args.create_components_file, args.no_zipped_output)
+
+    try:
+        file_output(output, args.name, args.output_dir, args.create_components_file, args.no_zipped_output)
+    except OSError as e:
+        print(e.filename + ' could not be opened.', file=sys.stderr)
 
 
 if __name__ == '__main__':
