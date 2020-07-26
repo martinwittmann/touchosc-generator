@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Compile dynamic templates to touch osc files.
 import argparse
 import base64
