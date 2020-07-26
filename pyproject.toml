@@ -1,6 +1,7 @@
 [tool.black]
 hang_closing = true
 line_length = 120
+skip_string_normalization = true
 
 [tool.autopep8]
 hang_closing = true
