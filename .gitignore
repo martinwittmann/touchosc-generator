@@ -1,4 +1,6 @@
-demo.json
 .idea/
-.vscode
+.vscode/
+output/
+
+demo.json
 *.pyc

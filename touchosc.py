@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # Compile dynamic templates to touch osc files.
 import argparse
 import base64
@@ -6,24 +6,23 @@ import json
 import os
 import shutil
 import sys
+import zipfile
+from typing import Dict, List, Literal, Tuple, Union
 
 from jinja2 import BaseLoader, Environment, FileSystemLoader
 
 
 # Copied from http://codyaray.com/2015/05/auto-load-jinja2-macros
 class PrependingLoader(BaseLoader):
-    def __init__(self, delegate, prepend_template):
+    def __init__(self, delegate: FileSystemLoader, prepend_template: str) -> None:
         self.delegate = delegate
         self.prepend_template = prepend_template
 
-    def get_source(self, environment, template):
+    def get_source(self, environment: Environment, template: str):
         prepend_source, _, prepend_uptodate = self.delegate.get_source(environment, self.prepend_template)
         main_source, main_filename, main_uptodate = self.delegate.get_source(environment, template)
 
-        def uptodate():
-            return prepend_uptodate() and main_uptodate()
-
-        return prepend_source + main_source, main_filename, uptodate
+        return prepend_source + main_source, main_filename, lambda u: prepend_uptodate() and main_uptodate()
 
     def list_templates(self):
         return self.delegate.list_templates()
@@ -36,112 +35,81 @@ def merge_jinja_dicts(*args):
     return result
 
 
-def base64_encode(text):
-    return base64.b64encode(text.encode("utf-8")).decode("utf-8")
+def base64_encode(text: str):
+    return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
 
-def replace_placeholders(text="", data=False, arguments=False, index=0, column=0, row=0):
+def retrieve(data_type: Literal['data', 'args'], text: str, data: str, index: int = 0, column: int = 0, row: int = 0):
+    result = text
+
+    start_index = result.find('{{' + data_type + '.')
+    while start_index > -1:
+        end_index = start_index + result[start_index:].find('}}')
+        if end_index < 0:
+            # Stop if we don't find any end delimiters.
+            break
+        data_str = result[start_index + 7 : end_index]
+        data_keys = data_str.split('.')
+        tmp_data = data
+        key_index = 0
+        for key in data_keys:
+            if data_type == 'data':
+                # Replace index values with 0-based indexes.
+                if key == '@index':
+                    key_index = index
+                elif key == '@column':
+                    key_index = column
+                elif key == '@row':
+                    key_index = row
+
+            if isinstance(tmp_data, dict) and key in tmp_data:
+                tmp_data = tmp_data[key]
+            elif isinstance(tmp_data, list) and tmp_data[key_index] is not None:
+                tmp_data = tmp_data[key]
+            else:
+                # Something went wrong, we did not find the requested data.
+                # TODO Error handling.
+                print(
+                    'Error looking up {type}: {data} was not found. Last key: "{key}"'.format(
+                        type=data_type, data=result[start_index + 2 : end_index], key=str(key)
+                    )
+                )
+                return result
+
+        if not isinstance(tmp_data, str) and not isinstance(tmp_data, int) and not isinstance(tmp_data, float):
+            print(
+                'Error looking up {type}: {data} is not a string or number. Last key: "{key}" Type: {data_type}'.format(
+                    type=data_type,
+                    data=result[start_index + 2 : end_index],
+                    key=str(key),
+                    data_type=str(type(tmp_data)),
+                )
+            )
+            return result
+
+        # We found the data referenced in the string, replace it.
+        result = result[0:start_index] + str(tmp_data) + result[end_index + 2 :]
+
+        # Set data index to the next result, if any.
+        start_index = result.find('{{data.')
+
+    return result
+
+
+def replace_placeholders(
+    text: str = '', data: str = None, arguments: str = None, index: int = 0, column: int = 0, row: int = 0
+):
     if type(text) != str:
         text = str(text)
     result = text
 
     # Retrieve data values if necessary.
     if data:
-        start_index = result.find("{{data.")
-        while start_index > -1:
-            end_index = start_index + result[start_index:].find("}}")
-            if end_index < 0:
-                # Stop if we don't find any end delimiters.
-                break
-            data_str = result[start_index + 7 : end_index]
-            data_keys = data_str.split(".")
-            tmp_data = data
-            for key in data_keys:
-                # Replace index values with 0-based indexes.
-                if key == "@index":
-                    key = index
-                elif key == "@column":
-                    key = column
-                elif key == "@row":
-                    key = row
-
-                if isinstance(tmp_data, dict) and key in tmp_data:
-                    tmp_data = tmp_data[key]
-                elif isinstance(tmp_data, list) and tmp_data[key]:
-                    tmp_data = tmp_data[key]
-                else:
-                    # Something went wrong, we did not find the requested data.
-                    # TODO Error handling.
-                    print(
-                        "Error looking up data: "
-                        + result[start_index + 2 : end_index]
-                        + ' was not found. Last key: "'
-                        + str(key)
-                        + '"'
-                    )
-                    return result
-
-            if not isinstance(tmp_data, str) and not isinstance(tmp_data, int) and not isinstance(tmp_data, float):
-                print(
-                    "Error looking up data: "
-                    + result[start_index + 2 : end_index]
-                    + " is not a string or number. Last key: "
-                    + str(key)
-                    + " Type: "
-                    + str(type(tmp_data))
-                )
-                return result
-
-            # We found the data referenced in the string, replace it.
-            result = result[0:start_index] + str(tmp_data) + result[end_index + 2 :]
-
-            # Set data index to the next result, if any.
-            start_index = result.find("{{data.")
+        result = retrieve('data', data, text, index, column, row)
 
     # Replace arguments if necessary.
     if arguments:
-        start_index = result.find("{{args.")
-        while start_index > -1:
-            end_index = start_index + result[start_index:].find("}}")
-            if end_index < 0:
-                # Stop if we don't find any end delimiters.
-                break
-            arg_str = result[start_index + 7 : end_index]
-            arg_keys = arg_str.split(".")
-            tmp_arg = arguments
-            for key in arg_keys:
-                if isinstance(tmp_arg, dict) and key in tmp_arg:
-                    tmp_arg = tmp_arg[key]
-                elif isinstance(tmp_arg, list) and tmp_arg[key]:
-                    tmp_arg = tmp_arg[key]
-                else:
-                    # Something went wrong, we did not find the requested arg.
-                    # TODO Error handling.
-                    print(
-                        "Error looking up argument: "
-                        + result[start_index + 2 : end_index]
-                        + ' was not found. Last key: "'
-                        + str(key)
-                        + '"'
-                    )
-                    return result
-
-            if not isinstance(tmp_arg, str) and not isinstance(tmp_arg, int) and not isinstance(tmp_arg, float):
-                print(
-                    "Error looking up arg: "
-                    + result[start_index + 2 : end_index]
-                    + " is not a string or number. Last key: "
-                    + str(key)
-                    + " Type: "
-                    + str(type(tmp_arg))
-                )
-                return result
-
-            # We found the arg referenced in the string, replace it.
-            result = result[0:start_index] + str(tmp_arg) + result[end_index + 2 :]
-
-            # Set arg index to the next result, if any.
-            start_index = result.find("{{arg.")
+        result = retrieve('args', arguments, text, index, column, row)
 
     # Replace loop variables.
     # Note that we use 1-based indexes for replacements, because for user-facing
@@ -149,80 +117,119 @@ def replace_placeholders(text="", data=False, arguments=False, index=0, column=0
     # need 0-based indexes and we don't want the replacements below to replace to
     # incorrect data indexes.
     # texts this makes much more sense.
-    result = result.replace("@index", str(index + 1))
-    result = result.replace("@column", str(column + 1))
-    result = result.replace("@row", str(row + 1))
+    result = result.replace('@index', str(index + 1))
+    result = result.replace('@column', str(column + 1))
+    result = result.replace('@row', str(row + 1))
 
     return result
 
 
-def main(argv):
-    # Parse command line parameters
-    argv = list(filter(lambda elem: elem != "", argv))
-    parser = argparse.ArgumentParser(
-        description="Compile dynamic templates to touch osc files.",
-        usage="./touchosc.py [components-file]. See example.json.",
-    )
-    parser.add_argument("components_file")
-    args = parser.parse_args(argv)
-
-    # Sanitize input
-    args.components_file = os.path.abspath(args.components_file)
-
+def get_description_data(description_file: str) -> Dict:
     # Parse components file
-    with open(args.components_file, "r") as components_data_file_handle:
-        components_data = json.load(components_data_file_handle)
+    with open(description_file, 'r') as description_file_handle:
+        description_data = json.load(description_file_handle)
+    return description_data
 
-    output_name = os.path.splitext(os.path.basename(args.components_file))[0]
-    template_dir = os.path.abspath("templates")
-    output_dir = os.path.join("output", output_name)
 
-    # We always start with layout.xml, this is whatthe touchosc file format expects.
-    template_name = "layout.xml"
+def process(description_data):
+    # We always start with layout.xml, this is what the touchosc file format expects.
+    template_dir = os.path.abspath('templates')
+    template_name = 'layout.xml'
     template_file = os.path.join(template_dir, template_name)
 
-    # Create the output dir for this components file if not existing.
-    if not os.path.isdir(output_dir):
-        os.mkdir(output_dir)
-
-    # Always using index.html since the is the only filename touchosc uses.
-    output_file = os.path.join(os.path.abspath(output_dir), "index.xml")
-
     if not os.path.isfile(template_file):
-        print("Template file " + template_file + " does not exist.")
-        sys.exit(1)
+        raise FileNotFoundError('Template file ' + template_file + ' does not exist.')
 
     # The header defines all macros that we need.
-    jinja2_environment = Environment(loader=PrependingLoader(FileSystemLoader(template_dir), "_header.xml"))
-    jinja2_environment.filters["b64encode"] = base64_encode
-    jinja2_environment.filters["placeholders"] = replace_placeholders
-    jinja2_environment.filters["merge"] = merge_jinja_dicts
+    jinja2_environment = Environment(loader=PrependingLoader(FileSystemLoader(template_dir), '_header.xml'))
+    jinja2_environment.filters['b64encode'] = base64_encode
+    jinja2_environment.filters['placeholders'] = replace_placeholders
+    jinja2_environment.filters['merge'] = merge_jinja_dicts
 
     # Provide the elements in data as global.
-    if "data" in components_data:
-        jinja2_environment.globals["data"] = components_data["data"]
+    if 'data' in description_data:
+        jinja2_environment.globals['data'] = description_data['data']
     else:
-        jinja2_environment.globals["data"] = False
+        jinja2_environment.globals['data'] = None
 
     # Provide the elements in reusable_components as global.
-    if "reusable_components" in components_data:
-        if "data" in components_data:
-            jinja2_environment.globals["reusable_components"] = components_data["reusable_components"]
+    if 'reusable_components' in description_data:
+        if 'data' in description_data:
+            jinja2_environment.globals['reusable_components'] = description_data['reusable_components']
         else:
-            jinja2_environment.globals["reusable_components"] = False
+            jinja2_environment.globals['reusable_components'] = None
 
     template = jinja2_environment.get_template(template_name)
 
-    output = template.render(component=components_data)
-    file_handle = open(output_file, "w+")
-    file_handle.write(output)
-    file_handle.close()
-
-    shutil.make_archive(output_file, "zip", output_dir)
-    # Note that output_dir already contains the output_name we want.
-    # This means we can simply add the .touchosc extension and get the filename we want.
-    # Example: ./touchosc.py test.json -> output/test -> output/test.touchosc.
+    return template.render(component=description_data)
 
 
-if __name__ == "__main__":
-    main(sys.argv)
+def file_output(data, output_name: str, output_dir, component_out: bool, no_zip_out: bool):
+    # Always using index.html since the is the only filename touchosc uses.
+    components_file = os.path.join(output_dir, 'index.xml')
+    output_file = os.path.join(output_dir, output_name + '.touchosc')
+
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+
+    with open(components_file, 'w+') as file_handle:
+        file_handle.write(data)
+
+    if not no_zip_out:
+        with zipfile.ZipFile(output_file, 'w') as zip_handle:
+            zip_handle.write(components_file)
+    else:
+        if os.path.isfile(output_file):
+            os.remove(output_file)
+
+    if not component_out:
+        os.remove(components_file)
+
+
+def main(argv: List[str]):
+    # Remove potential empty strings from the arguments as they confuse argparse
+    argv = list(filter(lambda elem: elem != '', argv))
+
+    # Parse command line parameters
+    parser = argparse.ArgumentParser(prog='touchosc.py', description='Compile dynamic templates to touch osc files.',)
+    parser.add_argument('description_file', help='JSON file containing the description of the components.')
+    parser.add_argument('--name', '-n', help='Name of output file. Default: <description_file>.touchosc')
+    parser.add_argument('--output-dir', '-o', help='Output directory. Default: ./output/<description_file>')
+    parser.add_argument(
+        '--create-components-file',
+        '-c',
+        action='store_true',
+        help='Create unzipped index.xml file for further processing.',
+    )
+    parser.add_argument('--no-zipped-output', '-z', action='store_true', help='Do not create zipped .touchosc file.')
+    args = parser.parse_args(argv)
+
+    # Sanitize input
+    args.description_file = os.path.abspath(args.description_file)
+    if not os.path.isfile(args.description_file):
+        print('Description file ' + args.description_file + ' does not exist', file=sys.stderr)
+        sys.exit(1)
+
+    if args.name is None:
+        args.name = os.path.splitext(os.path.basename(args.description_file))[0]
+    if args.output_dir is None:
+        args.output_dir = os.path.abspath(os.path.join('output', args.name))
+
+    try:
+        components_data = get_description_data(args.description_file)
+    except OSError as e:
+        print('Description file ' + e.filename + ' could not be opened.', file=sys.stderr)
+        sys.exit(1)
+
+    output = process(components_data)
+
+    try:
+        file_output(output, args.name, args.output_dir, args.create_components_file, args.no_zipped_output)
+    except OSError as e:
+        print(e.filename + ' could not be opened.', file=sys.stderr)
+
+
+if __name__ == '__main__':
+    # Remove first argument, which is always the path to this script.
+    # Argparse expects this to be removed, when not using the default params.
+    main(sys.argv[1:])
