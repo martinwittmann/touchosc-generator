@@ -14,18 +14,18 @@ from jinja2 import BaseLoader, Environment, FileSystemLoader
 
 # Copied from http://codyaray.com/2015/05/auto-load-jinja2-macros
 class PrependingLoader(BaseLoader):
-    def __init__(self, delegate: FileSystemLoader, prepend_template: str) -> None:
-        self.delegate = delegate
+    def __init__(self, loader: FileSystemLoader, prepend_template: str) -> None:
+        self.loader = loader
         self.prepend_template = prepend_template
 
     def get_source(self, environment: Environment, template: str):
-        prepend_source, _, prepend_uptodate = self.delegate.get_source(environment, self.prepend_template)
-        main_source, main_filename, main_uptodate = self.delegate.get_source(environment, template)
-
-        return prepend_source + main_source, main_filename, lambda u: prepend_uptodate() and main_uptodate()
+        prepend_source, _, prepend_uptodate = self.loader.get_source(environment, self.prepend_template)
+        main_source, main_filename, main_uptodate = self.loader.get_source(environment, template)
+        uptodate = lambda: prepend_uptodate() and main_uptodate()
+        return prepend_source + main_source, main_filename, uptodate
 
     def list_templates(self):
-        return self.delegate.list_templates()
+        return self.loader.list_templates()
 
 
 def merge_jinja_dicts(*args):
@@ -39,7 +39,7 @@ def base64_encode(text: str):
     return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
 
-def retrieve(data_type: Literal['data', 'args'], text: str, data: str, index: int = 0, column: int = 0, row: int = 0):
+def retrieve(data_type: Literal['data', 'args'], text: str, data: Dict, item_index: int = 0, column: int = 0, row: int = 0):
     result = text
 
     start_index = result.find('{{' + data_type + '.')
@@ -51,20 +51,19 @@ def retrieve(data_type: Literal['data', 'args'], text: str, data: str, index: in
         data_str = result[start_index + 7 : end_index]
         data_keys = data_str.split('.')
         tmp_data = data
-        key_index = 0
         for key in data_keys:
             if data_type == 'data':
                 # Replace index values with 0-based indexes.
                 if key == '@index':
-                    key_index = index
+                    key = item_index
                 elif key == '@column':
-                    key_index = column
+                    key = column
                 elif key == '@row':
-                    key_index = row
+                    key = row
 
             if isinstance(tmp_data, dict) and key in tmp_data:
                 tmp_data = tmp_data[key]
-            elif isinstance(tmp_data, list) and tmp_data[key_index] is not None:
+            elif isinstance(tmp_data, list) and tmp_data[key] is not None:
                 tmp_data = tmp_data[key]
             else:
                 # Something went wrong, we did not find the requested data.
@@ -105,11 +104,11 @@ def replace_placeholders(
 
     # Retrieve data values if necessary.
     if data:
-        result = retrieve('data', data, text, index, column, row)
+        result = retrieve('data', text, data, index, column, row)
 
     # Replace arguments if necessary.
     if arguments:
-        result = retrieve('args', arguments, text, index, column, row)
+        result = retrieve('args', text, arguments, index, column, row)
 
     # Replace loop variables.
     # Note that we use 1-based indexes for replacements, because for user-facing
@@ -131,17 +130,16 @@ def get_description_data(description_file: str) -> Dict:
     return description_data
 
 
-def process(description_data):
+def generate_xml_from_description(description_data, script_args):
     # We always start with layout.xml, this is what the touchosc file format expects.
-    template_dir = os.path.abspath('templates')
     template_name = 'layout.xml'
-    template_file = os.path.join(template_dir, template_name)
+    template_file = os.path.join(script_args.templates_dir, template_name)
 
     if not os.path.isfile(template_file):
         raise FileNotFoundError('Template file ' + template_file + ' does not exist.')
 
     # The header defines all macros that we need.
-    jinja2_environment = Environment(loader=PrependingLoader(FileSystemLoader(template_dir), '_header.xml'))
+    jinja2_environment = Environment(loader=PrependingLoader(FileSystemLoader(script_args.templates_dir), '_header.xml'))
     jinja2_environment.filters['b64encode'] = base64_encode
     jinja2_environment.filters['placeholders'] = replace_placeholders
     jinja2_environment.filters['merge'] = merge_jinja_dicts
@@ -165,7 +163,7 @@ def process(description_data):
 
 
 def file_output(data, output_name: str, output_dir, component_out: bool, no_zip_out: bool):
-    # Always using index.html since the is the only filename touchosc uses.
+    # Always using index.xml since the is the only filename touchosc uses.
     components_file = os.path.join(output_dir, 'index.xml')
     output_file = os.path.join(output_dir, output_name + '.touchosc')
 
@@ -177,7 +175,8 @@ def file_output(data, output_name: str, output_dir, component_out: bool, no_zip_
 
     if not no_zip_out:
         with zipfile.ZipFile(output_file, 'w') as zip_handle:
-            zip_handle.write(components_file)
+            zip_handle.write(os.path.basename(components_file))
+            zip_handle.close()
     else:
         if os.path.isfile(output_file):
             os.remove(output_file)
@@ -194,7 +193,7 @@ def main(argv: List[str]):
     parser = argparse.ArgumentParser(prog='touchosc.py', description='Compile dynamic templates to touch osc files.',)
     parser.add_argument('description_file', help='JSON file containing the description of the components.')
     parser.add_argument('--name', '-n', help='Name of output file. Default: <description_file>.touchosc')
-    parser.add_argument('--output-dir', '-o', help='Output directory. Default: ./output/<description_file>')
+    parser.add_argument('--output-dir', '-o', help='Output directory. Default: ./')
     parser.add_argument(
         '--create-components-file',
         '-c',
@@ -202,7 +201,11 @@ def main(argv: List[str]):
         help='Create unzipped index.xml file for further processing.',
     )
     parser.add_argument('--no-zipped-output', '-z', action='store_true', help='Do not create zipped .touchosc file.')
-    args = parser.parse_args(argv)
+    parser.add_argument('--templates-dir', '-t', help='Location of templates directory. Default: templates/ in the same directory as touchosc.py.')
+
+    # Remove first argument, which is always the path to this script.
+    # Argparse expects this to be removed, when not using the default params.
+    args = parser.parse_args(argv[1:])
 
     # Sanitize input
     args.description_file = os.path.abspath(args.description_file)
@@ -212,8 +215,12 @@ def main(argv: List[str]):
 
     if args.name is None:
         args.name = os.path.splitext(os.path.basename(args.description_file))[0]
+
     if args.output_dir is None:
-        args.output_dir = os.path.abspath(os.path.join('output', args.name))
+        args.output_dir = os.path.dirname(args.description_file)
+
+    if args.templates_dir is None:
+        args.templates_dir = os.path.join(os.path.abspath(os.path.dirname(argv[0])), 'templates')
 
     try:
         components_data = get_description_data(args.description_file)
@@ -221,7 +228,7 @@ def main(argv: List[str]):
         print('Description file ' + e.filename + ' could not be opened.', file=sys.stderr)
         sys.exit(1)
 
-    output = process(components_data)
+    output = generate_xml_from_description(components_data, script_args=args)
 
     try:
         file_output(output, args.name, args.output_dir, args.create_components_file, args.no_zipped_output)
@@ -230,6 +237,4 @@ def main(argv: List[str]):
 
 
 if __name__ == '__main__':
-    # Remove first argument, which is always the path to this script.
-    # Argparse expects this to be removed, when not using the default params.
-    main(sys.argv[1:])
+    main(sys.argv)
