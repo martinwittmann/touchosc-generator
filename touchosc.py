@@ -47,19 +47,19 @@ def retrieve(data_type: Literal['data', 'args'], text: str, data: Dict, item_ind
         end_index = start_index + result[start_index:].find('}}')
         if end_index < 0:
             # Stop if we don't find any end delimiters.
+            # TODO Error handling.
             break
         data_str = result[start_index + 7 : end_index]
         data_keys = data_str.split('.')
         tmp_data = data
         for key in data_keys:
-            if data_type == 'data':
-                # Replace index values with 0-based indexes.
-                if key == '@index':
-                    key = item_index
-                elif key == '@column':
-                    key = column
-                elif key == '@row':
-                    key = row
+            # Replace index values with 0-based indexes.
+            if key == '@index':
+                key = item_index
+            elif key == '@column':
+                key = column
+            elif key == '@row':
+                key = row
 
             if isinstance(tmp_data, dict) and key in tmp_data:
                 tmp_data = tmp_data[key]
@@ -96,7 +96,7 @@ def retrieve(data_type: Literal['data', 'args'], text: str, data: Dict, item_ind
 
 
 def replace_placeholders(
-    text: str = '', data: str = None, arguments: str = None, index: int = 0, column: int = 0, row: int = 0
+    text: str = '', data: Dict = None, arguments: Dict = None, index: int = 0, column: int = 0, row: int = 0
 ):
     if type(text) != str:
         text = str(text)
@@ -108,7 +108,7 @@ def replace_placeholders(
 
     # Replace arguments if necessary.
     if arguments:
-        result = retrieve('args', text, arguments, index, column, row)
+        result = retrieve('args', result, arguments, index, column, row)
 
     # Replace loop variables.
     # Note that we use 1-based indexes for replacements, because for user-facing

@@ -35,9 +35,11 @@
   {%- set item = item.copy() -%}
   {%- set column = (index % component.columns)|int -%}
   {%- set row = (index / component.columns)|round(0, 'floor')|int -%}
-  {%- set _dummy = item.update({
-    'x': component.x|int + (spacer_x * column) + (column * item_width),
-    'y': component.y|int + (spacer_y * row) + (row * item_height),
+  {%- set item = item|merge({
+    'x': (spacer_x * column) + (column * item_width),
+    'y': (spacer_y * row) + (row * item_height),
+    'width': item_width,
+    'height': item_height,
   }) -%}
   {{ render(item, component, index=index, column=column, row=row) }}
 {%- endfor -%}

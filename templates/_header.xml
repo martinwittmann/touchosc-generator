@@ -18,7 +18,7 @@
 
   {%- if ns.component.type in reusable_components -%}
     {# Set defaults from reusable component. #}
-    {%- set reused_component = reusable_components[ns.component.type] -%}
+    {%- set reused_component = reusable_components[ns.component.type].copy() -%}
     {% set ns.component = reused_component|merge(ns.component, {'type': reused_component.type}) %}
   {%- endif -%}
 
@@ -28,7 +28,7 @@
       'width': 100,
       'height': 100,
   } -%}
-  {%- if ns.component.type == 'tabpage' -%}
+  {%- if ns.component.type == 'tabpage' or ns.component.type == 'repeat' -%}
     {#- Set tabpage default values since this will always take up all available space. -#}
     {%- set component_defaults = {
         'x': 0,
@@ -38,6 +38,17 @@
     } -%}
   {%- endif -%}
   {%- set ns.component = component_defaults|merge(ns.component) -%}
+  {#
+    Apply placeholders to arguments here already because they would get replaced
+    later possibly in repeated subcomponents with incorrect values.
+   #}
+  {%- for key in ns.arguments -%}
+    {%- set value = ns.arguments[key] -%}
+    {%- if value is string -%}
+      {%- set new_value = value|placeholders(data, ns.arguments, index, column, row) -%}
+      {%- set ns.arguments = ns.arguments|merge({ key: new_value }) -%}
+    {%- endif -%}
+  {%- endfor -%}
   {%- set ns.component = ns.component|merge({'args': ns.arguments}) -%}
 
 
