@@ -30,14 +30,17 @@ class CustomJinjaFilters:
             text = str(text)
         result = text
 
-        # Retrieve data values if necessary.
         try: 
-            if data:
-                result = self.get_replacement_value('data', component, text, data, index, column, row)
-
             # Replace arguments if necessary.
+            # We do that *before* the data values to allow using args in data.
             if arguments:
-                result = self.get_replacement_value('args', component, result, arguments, index, column, row)
+                result = self.replace_values('args', component, text, arguments, index, column, row)
+
+            # Replace data values if necessary.
+            if data:
+                result = self.replace_values('data', component, result, data, index, column, row)
+
+
         except MissingArgException as err:
             if not self.script_args.ignore_missing_args:
                 print(err)
@@ -58,13 +61,14 @@ class CustomJinjaFilters:
         # need 0-based indexes and we don't want the replacements below to replace to
         # incorrect data indexes.
         # texts this makes much more sense.
+        result = result.replace('@index_0', str(index))
         result = result.replace('@index', str(index + 1))
         result = result.replace('@column', str(column + 1))
         result = result.replace('@row', str(row + 1))
 
         return result
 
-    def get_replacement_value(self, data_type: str, component: str, text: str, data: Dict, item_index: int = 0, column: int = 0, row: int = 0):
+    def replace_values(self, data_type: str, component: str, text: str, data: Dict, item_index: int = 0, column: int = 0, row: int = 0):
         result = text
 
         start_index = result.find('{{' + data_type + '.')
@@ -88,8 +92,8 @@ class CustomJinjaFilters:
 
                 if isinstance(tmp_data, dict) and key in tmp_data:
                     tmp_data = tmp_data[key]
-                elif isinstance(tmp_data, list) and tmp_data[key] is not None:
-                    tmp_data = tmp_data[key]
+                elif isinstance(tmp_data, list) and tmp_data[int(key)] is not None:
+                    tmp_data = tmp_data[int(key)]
                 else:
                     # We did not find the requested data.
                     if data_type == 'args':
@@ -117,6 +121,6 @@ class CustomJinjaFilters:
             result = result[0:start_index] + str(tmp_data) + result[end_index + 2 :]
 
             # Set data index to the next result, if any.
-            start_index = result.find('{{data.')
+            start_index = result.find('{{' + data_type + '.')
 
         return result

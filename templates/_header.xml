@@ -15,7 +15,6 @@
     {% set ns.arguments = ns.arguments|merge(component.args) -%}
   {%- endif -%}
 
-
   {%- if ns.component.type in reusable_components -%}
     {# Set defaults from reusable component. #}
     {%- set reused_component = reusable_components[ns.component.type].copy() -%}
