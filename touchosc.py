@@ -7,7 +7,7 @@ import os
 import shutil
 import sys
 import zipfile
-from typing import Dict, List, Literal, Tuple, Union
+from typing import Dict, List
 
 from jinja2 import BaseLoader, Environment, FileSystemLoader
 
@@ -39,7 +39,7 @@ def base64_encode(text: str):
     return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
 
-def retrieve(data_type: Literal['data', 'args'], text: str, data: Dict, item_index: int = 0, column: int = 0, row: int = 0):
+def retrieve(data_type: str, text: str, data: Dict, item_index: int = 0, column: int = 0, row: int = 0):
     result = text
 
     start_index = result.find('{{' + data_type + '.')
@@ -202,6 +202,7 @@ def main(argv: List[str]):
     )
     parser.add_argument('--no-zipped-output', '-z', action='store_true', help='Do not create zipped .touchosc file.')
     parser.add_argument('--templates-dir', '-t', help='Location of templates directory. Default: templates/ in the same directory as touchosc.py.')
+    parser.add_argument('--debug', '-d', action='store_true', help='Show errors for missing args and data values.')
 
     # Remove first argument, which is always the path to this script.
     # Argparse expects this to be removed, when not using the default params.
