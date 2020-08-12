@@ -46,7 +46,7 @@
   {%- for key in ns.arguments -%}
     {%- set value = ns.arguments[key] -%}
     {%- if value is string -%}
-      {%- set new_value = value|placeholders(data, ns.arguments, index, column, row) -%}
+      {%- set new_value = value|placeholders(component.type, data, ns.arguments, index, column, row) -%}
       {%- set ns.arguments = ns.arguments|merge({ key: new_value }) -%}
     {%- endif -%}
   {%- endfor -%}
@@ -59,7 +59,7 @@
 
     {# Handle all string values and text, name, osc #}
     {%- if value is string or key in ['text', 'name', 'osc'] and key != 'args' -%}
-      {%- set new_value = value|placeholders(data, ns.arguments, index, column, row) -%}
+      {%- set new_value = value|placeholders(component.type, data, ns.arguments, index, column, row) -%}
 
       {%- if key in ['text', 'name', 'osc'] -%}
         {%- set new_value = new_value|b64encode -%}
