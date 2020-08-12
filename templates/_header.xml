@@ -28,6 +28,7 @@
       'width': 100,
       'height': 100,
   } -%}
+
   {%- if ns.component.type in ['tabpage', 'container', 'repeat'] -%}
     {#-
       We consider these similar to html block elements using the available
@@ -58,7 +59,7 @@
     {%- set value = ns.component[key] -%}
 
     {# Handle all string values and text, name, osc #}
-    {%- if value is string or key in ['text', 'name', 'osc'] and key != 'args' -%}
+    {%- if (value is string or key in ['text', 'name', 'osc']) and key != 'args' -%}
       {%- set new_value = value|placeholders(component.type, data, ns.arguments, index, column, row) -%}
 
       {%- if key in ['text', 'name', 'osc'] -%}
@@ -108,7 +109,7 @@
   {#-
     Note that we need to set the component variable outside of ns since this is
     what each template uses.
-   -#}
+  -#}
   {% set component = ns.component %}
   {%- include component.type ~ '.xml' -%}
 

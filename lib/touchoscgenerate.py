@@ -25,27 +25,27 @@ def generate_xml_from_description(description_data, script_args):
         raise FileNotFoundError('Template file ' + template_file + ' does not exist.')
 
     # The header defines all macros that we need.
-    jinja2_environment = Environment(loader=PrependingLoader(FileSystemLoader(script_args.templates_dir), '_header.xml'))
+    jinja2_env = Environment(loader=PrependingLoader(FileSystemLoader(script_args.templates_dir), '_header.xml'))
 
     filters = CustomJinjaFilters(script_args)
-    jinja2_environment.filters['b64encode'] =  filters.base64_encode
-    jinja2_environment.filters['placeholders'] =  filters.replace_placeholders
-    jinja2_environment.filters['merge'] = filters.merge_jinja_dicts
+    jinja2_env.filters['b64encode'] =  filters.base64_encode
+    jinja2_env.filters['placeholders'] =  filters.replace_placeholders
+    jinja2_env.filters['merge'] = filters.merge_jinja_dicts
 
     # Provide the elements in data as global.
     if 'data' in description_data:
-        jinja2_environment.globals['data'] = description_data['data']
+        jinja2_env.globals['data'] = description_data['data']
     else:
-        jinja2_environment.globals['data'] = None
+        jinja2_env.globals['data'] = None
 
     # Provide the elements in reusable_components as global.
     if 'reusable_components' in description_data:
         if 'data' in description_data:
-            jinja2_environment.globals['reusable_components'] = description_data['reusable_components']
+            jinja2_env.globals['reusable_components'] = description_data['reusable_components']
         else:
-            jinja2_environment.globals['reusable_components'] = None
+            jinja2_env.globals['reusable_components'] = None
 
-    template = jinja2_environment.get_template(template_name)
+    template = jinja2_env.get_template(template_name)
 
     return template.render(component=description_data)
 

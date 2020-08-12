@@ -26,7 +26,8 @@ def main(argv: List[str]):
     )
     parser.add_argument('--no-zipped-output', '-z', action='store_true', help='Do not create zipped .touchosc file.')
     parser.add_argument('--templates-dir', '-t', help='Location of templates directory. Default: templates/ in the same directory as touchosc.py.')
-    parser.add_argument('--debug', '-d', action='store_true', help='Show errors for missing args and data values.')
+    parser.add_argument('--ignore-missing-args', '-M', action='store_true', help='Ignore missing component arguments.')
+    parser.add_argument('--ignore-missing-data', '-D', action='store_true', help='Ignore missing data values.')
 
     # Remove first argument, which is always the path to this script.
     # Argparse expects this to be removed, when not using the default params.

@@ -1,6 +1,14 @@
 import base64
 from typing import Dict
 
+class MissingArgException(Exception):
+    """A component argument was missing."""
+    pass
+
+class MissingDataException(Exception):
+    """A data value was missing."""
+    pass
+
 class CustomJinjaFilters:
     def __init__(self, script_args):
         self.script_args = script_args
@@ -15,19 +23,34 @@ class CustomJinjaFilters:
         return base64.b64encode(text.encode('utf-8')).decode('utf-8')
 
     def replace_placeholders(
-        self, component: str = '', text: str = '', data: Dict = None, arguments: Dict = None, index: int = 0, column: int = 0, row: int = 0
+        self, text: str = '', component: str = '', data: Dict = None, arguments: Dict = None, index: int = 0, column: int = 0, row: int = 0
     ):
+
         if type(text) != str:
             text = str(text)
         result = text
 
         # Retrieve data values if necessary.
-        if data:
-            result = self.get_replacement_value('data', component, text, data, index, column, row)
+        try: 
+            if data:
+                result = self.get_replacement_value('data', component, text, data, index, column, row)
 
-        # Replace arguments if necessary.
-        if arguments:
-            result = self.get_replacement_value('args', component, result, arguments, index, column, row)
+            # Replace arguments if necessary.
+            if arguments:
+                result = self.get_replacement_value('args', component, result, arguments, index, column, row)
+        except MissingArgException as err:
+            if not self.script_args.ignore_missing_args:
+                print(err)
+
+            # Default to an empty string if a replacement/lookup failed.
+            result = ''
+
+        except MissingDataException as err:
+            if not self.script_args.ignore_missing_data:
+                print(err)
+
+            # Default to an empty string if a replacement/lookup failed.
+            result = ''
 
         # Replace loop variables.
         # Note that we use 1-based indexes for replacements, because for user-facing
@@ -68,25 +91,27 @@ class CustomJinjaFilters:
                 elif isinstance(tmp_data, list) and tmp_data[key] is not None:
                     tmp_data = tmp_data[key]
                 else:
-                    # Something went wrong, we did not find the requested data.
-                    # TODO Error handling.
-                    print(
-                        'Can\'t find "{text}" for component "{component}"'.format(
-                            text=text, component=component
+                    # We did not find the requested data.
+                    if data_type == 'args':
+                        raise MissingArgException(
+                            'Missing argument "{text}" for component "{component}".'.format(
+                                text=text, component=component
+                            )
                         )
-                    )
-                    return result
+                    else:
+                        raise MissingDataException(
+                            'Missing data value "{text}" for component "{component}".'.format(
+                                text=text, component=component
+                            )
+                        )
 
             if not isinstance(tmp_data, str) and not isinstance(tmp_data, int) and not isinstance(tmp_data, float):
-                print(
-                    'Error looking up {type}: {data} is not a string or number. Last key: "{key}" Type: {data_type}'.format(
-                        type=data_type,
-                        data=result[start_index + 2 : end_index],
-                        key=str(key),
-                        data_type=str(type(tmp_data)),
+                raise Exception(
+                    'Value "{value}" for component {component} is not a string or number.'.format(
+                        value=tmp_data,
+                        component=component
                     )
                 )
-                return result
 
             # We found the data referenced in the string, replace it.
             result = result[0:start_index] + str(tmp_data) + result[end_index + 2 :]
