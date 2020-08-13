@@ -256,18 +256,18 @@
         },
         {
           "type": "faderv",
-          "width": "74%",
+          "width": "76%",
           "height": "50%",
-          "y": "6.8%",
+          "y": "7%",
           "osc": "/track/{{args.track_index}}/volume",
           "inverted": "true"
         },
         {
           "type": "meter",
-          "width": "21%",
+          "width": "17%",
           "height": "50%",
-          "x": "78%",
-          "y": "6.8%"
+          "x": "82%",
+          "y": "7%"
         },
         {
           "type": "labelled_button",
