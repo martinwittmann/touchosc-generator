@@ -22,8 +22,8 @@
   {%- set spacer_x = (component.spacer_x[:-1]|float / 100) * component.width|float -%}
 {%- endif -%}
 
-{%- if 'spacer_x' not in component -%}
-  {% set component = component|merge({'spacer_x': 0}) %}
+{%- if 'spacer_y' not in component -%}
+  {% set component = component|merge({'spacer_y': 0}) %}
 {%- endif -%}
 {%- set spacer_y = component.spacer_y|float -%}
 {%- if component.spacer_y[-1] == '%' -%}

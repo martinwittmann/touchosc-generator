@@ -86,7 +86,7 @@ Let's create 10 faders sending different osc messages:
           "spacer_x": "2%",
           "component": {
             "type": "faderv",
-            "width": "16%",
+            "width": "8%",
             "height": "50%",
             "osc": "/action/{{data.messages.@index}}"
           }
