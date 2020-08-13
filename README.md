@@ -103,7 +103,7 @@ The examples directory contains several input files showcasing in more detail wh
 
 ## Installation
 To run TouchOsc Generator you need to know how to run python scripts and have
-python 3.8 and the jinja2 package installed.
+python 3.6+ and the jinja2 package installed.
 
 ### Python installation
 Follow the official installation instructions on https://wiki.python.org/moin/BeginnersGuide/Download.
