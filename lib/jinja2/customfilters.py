@@ -62,15 +62,12 @@ class CustomJinjaFilters:
         # need 0-based indexes and we don't want the replacements below to replace to
         # incorrect data indexes.
         # texts this makes much more sense.
-        #result = result.replace('@index_0', str(index))
-        #result = result.replace('@index', str(index + 1))
-        #result = result.replace('@column', str(column + 1))
-        #result = result.replace('@row', str(row + 1))
+        result = re.sub(r'(?<!@)@index_0', str(index), result)
+        result = re.sub(r'(?<!@)@index', str(index + 1), result)
+        result = re.sub(r'(?<!@)@column', str(column + 1), result)
+        result = re.sub(r'(?<!@)@row', str(row + 1), result)
 
-        result = re.sub('([^c])@index_0', '\1' + str(index), result)
-        result = re.sub('([^c])@index', '\1' + str(index + 1), result)
-        result = re.sub('([^c])@column', '\1' + str(column + 1), result)
-        result = re.sub('([^c])@row', '\1' + str(row + 1), result)
+        result = re.sub('@@(index_0|index|column|row)', r'@\1', result)
 
         return result
 
