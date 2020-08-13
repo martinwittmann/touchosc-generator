@@ -26,7 +26,7 @@
       "components": [
         {
           "type": "labelh",
-          "text": "There is an addition component: container.",
+          "text": "There is an additional component: container.",
           "text_size": "25",
           "color": "green",
           "outline": "true",
@@ -37,8 +37,8 @@
         },
         {
           "type": "container",
-          "x": "50%",
-          "y": "20%",
+          "x": "25%",
+          "y": "40%",
           "width": "50%",
           "height": "35%",
           "components": [
@@ -47,21 +47,14 @@
               "text": "Components in a container can use coordinates relative to their container.",
               "text_size": "25",
               "width": "100%",
-              "y": "15%"
+              "y": "0"
             },
             {
               "type": "labelh",
-              "text": "This makes it way easier to position things consistently.",
+              "text": "This makes it easier to position things consistently.",
               "text_size": "25",
               "width": "100%",
-              "y": "30%"
-            },
-            {
-              "type": "labelh",
-              "text": "Actually it's more like a dummy than a component to help us with positioning :)",
-              "text_size": "20",
-              "width": "100%",
-              "y": "40%"
+              "y": "15%"
             }
           ]
         }

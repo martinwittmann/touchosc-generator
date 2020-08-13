@@ -2,11 +2,12 @@
 
 A generator for [TouchOsc](https://hexler.net/products/touchosc) files which greatly reduces repetive tasks and adds several helpful features not available in the original [TouchOsc Editor](https://hexler.net/products/touchosc#downloads).
 
-TouchOsc Templates does not have a UI, but is a script generating .touchosc files based on input files (json) describing the TouchOsc interface you want to build.
+TouchOsc templates does not have a UI, but is a script generating .touchosc files based on input files (json) describing the TouchOsc interface you want to build.
 
 If you don't have python installed or don't know how to run python scripts on your computer, in the [Installation](#installation) section you will find everything to get you started.
 
 # Examples
+Here are some simple examples to get you started quickly.
 
 ## Simple
 This creates a basic .touchosc file containing just a label and some text in it.
@@ -39,7 +40,7 @@ example.json:
 ```
 
 ```
-python ./touchosc.py example.json
+./touchosc.py example.json
 ```
 This creates ./output/example.touchosc.
 
@@ -97,6 +98,8 @@ Let's create 10 faders sending different osc messages:
 ```
 
 Yes, you can use percentages for dimensions and coordinates 💪 
+
+## More examples!
 
 The examples directory contains several input files showcasing in more detail what you can do with TouchOsc Generator.
 

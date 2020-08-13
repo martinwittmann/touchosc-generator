@@ -35,7 +35,7 @@
         },
         {
           "type": "labelh",
-          "text": "We can use index, column and row as variables for labels, osc messages,... That's awesome!",
+          "text": "We can use c@index, c@column and @row as variables for labels, osc messages,... That's awesome!",
           "text_size": 25,
           "color": "green",
           "x": "0%",
@@ -48,7 +48,7 @@
           "width": "100%",
           "height": "100%",
           "x": "0",
-          "y": "100",
+          "y": "10%",
           "count": 9,
           "columns": 5,
           "spacer_x": "2%",

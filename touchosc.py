@@ -22,9 +22,9 @@ def main(argv: List[str]):
         '--create-components-file',
         '-c',
         action='store_true',
-        help='Create unzipped index.xml file for further processing.',
+        help='Create <name>.xml file for debugging/further processing.',
     )
-    parser.add_argument('--no-zipped-output', '-z', action='store_true', help='Do not create zipped .touchosc file.')
+    parser.add_argument('--no-zipped-output', '-z', action='store_true', help='Do not create a .touchosc file.')
     parser.add_argument('--templates-dir', '-t', help='Location of templates directory. Default: templates/ in the same directory as touchosc.py.')
     parser.add_argument('--ignore-missing-args', '-M', action='store_true', help='Ignore missing component arguments.')
     parser.add_argument('--ignore-missing-data', '-D', action='store_true', help='Ignore missing data values.')
@@ -43,7 +43,7 @@ def main(argv: List[str]):
         args.name = os.path.splitext(os.path.basename(args.description_file))[0]
 
     if args.output_dir is None:
-        args.output_dir = os.path.dirname(args.description_file)
+        args.output_dir = os.getcwd()
 
     if args.templates_dir is None:
         args.templates_dir = os.path.join(os.path.abspath(os.path.dirname(argv[0])), 'templates')
@@ -57,8 +57,17 @@ def main(argv: List[str]):
     output = generate_xml_from_description(components_data, script_args=args)
 
     try:
-        file_output(output, args.name, args.output_dir, args.create_components_file, args.no_zipped_output)
+        output_file = None
+        if not args.no_zipped_output:
+            output_file = os.path.join(args.output_dir, args.name + '.touchosc')
+
+        xml_output = None
+        if args.create_components_file:
+            xml_output = os.path.join(args.output_dir, args.name + '.xml')
+
+        file_output(output, args.output_dir, output_file, xml_output)
     except OSError as e:
+        print(e)
         print(e.filename + ' could not be opened.', file=sys.stderr)
 
 

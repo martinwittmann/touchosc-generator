@@ -1,7 +1,9 @@
 import json
 import os
-from typing import Dict, List
+import shutil
+import tempfile
 import zipfile
+from typing import Dict, List
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -50,24 +52,27 @@ def generate_xml_from_description(description_data, script_args):
     return template.render(component=description_data)
 
 
-def file_output(data, output_name: str, output_dir, component_out: bool, no_zip_out: bool):
+def file_output(xml_data: str, output_dir: str, touchosc_output: str, xml_output: str):
     # Always using index.xml since the is the only filename touchosc uses.
-    components_file = os.path.join(output_dir, 'index.xml')
-    output_file = os.path.join(output_dir, output_name + '.touchosc')
+    tmp_dir = tempfile.TemporaryDirectory()
+    components_file = os.path.join(tmp_dir.name, 'index.xml')
 
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
 
     with open(components_file, 'w+') as file_handle:
-        file_handle.write(data)
+        file_handle.write(xml_data)
 
-    if not no_zip_out:
-        with zipfile.ZipFile(output_file, 'w') as zip_handle:
-            zip_handle.write(os.path.basename(components_file))
+
+    if touchosc_output is not None:
+        toucosc_output = os.path.join(output_dir, touchosc_output)
+        with zipfile.ZipFile(touchosc_output, 'w') as zip_handle:
+            zip_handle.write(components_file, 'index.xml')
             zip_handle.close()
-    else:
-        if os.path.isfile(output_file):
-            os.remove(output_file)
+        print('Created touchosc file: {file}'.format(file=touchosc_output))
 
-    if not component_out:
-        os.remove(components_file)
+    if xml_output is not None:
+        shutil.copyfile(components_file, xml_output)
+        print('Created xml file: {file}'.format(file=xml_output))
+
+    tmp_dir.cleanup()
