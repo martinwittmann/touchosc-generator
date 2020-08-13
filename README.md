@@ -6,6 +6,8 @@ TouchOsc templates does not have a UI, but is a script generating .touchosc file
 
 If you don't have python installed or don't know how to run python scripts on your computer, in the [Installation](#installation) section you will find everything to get you started.
 
+![TouchOsc Templates full example](09-complex.png)
+
 # Examples
 Here are some simple examples to get you started quickly.
 
