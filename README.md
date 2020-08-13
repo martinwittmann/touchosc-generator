@@ -1,8 +1,8 @@
-# TouchOsc Generator
+# TouchOsc Templates
 
 A generator for [TouchOsc](https://hexler.net/products/touchosc) files which greatly reduces repetive tasks and adds several helpful features not available in the original [TouchOsc Editor](https://hexler.net/products/touchosc#downloads).
 
-TouchOsc Generator does not have a UI, but a script generating .touchosc files based on input files (json) describing the TouchOsc interface you want to build.
+TouchOsc Templates does not have a UI, but is a script generating .touchosc files based on input files (json) describing the TouchOsc interface you want to build.
 
 If you don't have python installed or don't know how to run python scripts on your computer, in the [Installation](#installation) section you will find everything to get you started.
 
@@ -103,7 +103,7 @@ The examples directory contains several input files showcasing in more detail wh
 
 ## Installation
 To run TouchOsc Generator you need to know how to run python scripts and have
-python3 and the jinja2 package installed.
+python 3.8 and the jinja2 package installed.
 
 ### Python installation
 Follow the official installation instructions on https://wiki.python.org/moin/BeginnersGuide/Download.

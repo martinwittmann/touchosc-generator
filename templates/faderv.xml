@@ -9,9 +9,9 @@
   osc_cs="{{ component.osc|default('') }}"
   scalef="{{ component.value_from|default(0) }}"
   scalet="{{ component.value_to|default(1) }}"
-  inverted="{{ component.inverted|default('false') }}"
+  inverted="{{ component.inverted|default('') }}"
   response="{{ component.response|default('absolute') }}"
-  centered="{{ component.centered|default('false') }}"
+  centered="{{ component.centered|default('') }}"
 >
   {{- midi(component)|indent(2, False) -}}
 </control>
